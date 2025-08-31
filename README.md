@@ -1,99 +1,57 @@
-# Polymarket Scanner
+# 🎯 Polymarket Scanner
 
-A full-stack application that fetches and displays Polymarket betting markets. Built with Node.js + Express backend and React + Vite frontend.
+**Real-time betting odds scanner** that aggregates data from Polymarket and major sportsbooks using live APIs.
 
-## Project Structure
+## 🚀 **Features**
+- ✅ **Live Polymarket Data** - Real-time prediction markets
+- ✅ **Sports Betting Odds** - NFL, NBA, Soccer, Tennis, MMA
+- ✅ **Multiple Bookmakers** - All major sportsbooks via The Odds API
+- ✅ **Real-time Updates** - Live data refresh
+- ✅ **Advanced Filters** - Search, sort, and filter markets
+- ✅ **Mobile Responsive** - Works on all devices
 
-```
-polymarket-scanner/
-├─ server/
-│  ├─ package.json
-│  └─ index.js
-├─ web/
-│  ├─ package.json
-│  ├─ vite.config.js
-│  ├─ index.html
-│  └─ src/
-│     ├─ main.jsx
-│     └─ App.jsx
-└─ README.md
-```
+## 🔧 **Tech Stack**
+- **Frontend**: React + Vite
+- **Backend**: Node.js + Express
+- **APIs**: Polymarket API + The Odds API
+- **Deployment**: Railway + Vercel
 
-## Features
+## 🏃‍♂️ **Quick Start**
 
-- Fetches live Polymarket betting markets via their API
-- Displays markets in a searchable, filterable table
-- Filter by title/category and minimum liquidity
-- Toggle between open and closed markets
-- Shows market outcomes with implied probabilities
-- Direct links to Polymarket pages
-
-## Setup & Run
-
-### 1. Start the Server
-
+### Local Development
 ```bash
+# Clone the repository
+git clone https://github.com/YOUR_USERNAME/polymarket-scanner.git
+cd polymarket-scanner
+
+# Start the server
 cd server
 npm install
 npm start
-```
 
-The server will run on http://localhost:4000
-
-### 2. Start the Web App
-
-In a new terminal:
-
-```bash
-cd web
+# Start the client (new terminal)
+cd ../web
 npm install
 npm run dev
 ```
 
-The React app will run on http://localhost:5173
-
-## API Endpoints
-
-- `GET /api/polymarket?active=true&limit=1000` - Fetch Polymarket markets
-
-## Requirements
-
-- Node.js 18+ (uses built-in `fetch`)
-- Modern browser with JavaScript enabled
-
-## Environment Variables
-
-### Server (optional)
-
+### Environment Setup
 Create `server/.env`:
-
 ```
-PORT=4000
-```
-
-### Web (optional)
-
-Create `web/.env`:
-
-```
-VITE_API_BASE=http://localhost:4000
+ODDS_API_KEY=your_odds_api_key_here
 ```
 
-## Development Notes
+## 🚀 **Deploy in 5 Minutes**
+See [DEPLOY.md](./DEPLOY.md) for complete deployment guide.
 
-- The server normalizes Polymarket API responses into a consistent format
-- Supports pagination to fetch large numbers of markets
-- React app uses modern hooks (useState, useEffect, useMemo)
-- Responsive table layout with inline styles
-- Error handling for API failures
+## 📊 **Screenshots**
+- Real-time betting odds from multiple sources
+- Advanced filtering and search capabilities
+- Mobile-responsive design
 
-## Extending
+## 🔑 **API Keys**
+- Get your free API key from [The Odds API](https://the-odds-api.com/)
+- 500 free requests per month
 
-You can extend this project by:
-
-- Adding database persistence
-- Implementing real-time updates
-- Adding more market filters
-- Creating charts/visualizations
-- Adding user authentication
-- Implementing market alerts
+## 📝 **License**
+MIT License - feel free to use and modify!
