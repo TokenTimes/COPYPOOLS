@@ -20,6 +20,8 @@ export default function App() {
   const [countdown, setCountdown] = useState(30);
   const [activeTab, setActiveTab] = useState("polymarket");
   const [sport, setSport] = useState("soccer_epl");
+  const [sortBy, setSortBy] = useState("date");
+  const [sortOrder, setSortOrder] = useState("desc");
   const [regions, setRegions] = useState("uk,eu");
   const [previousMarkets, setPreviousMarkets] = useState(new Set());
   const [newMarkets, setNewMarkets] = useState(new Set());
@@ -80,6 +82,20 @@ export default function App() {
     fetchData();
   }, [activeTab, onlyOpen, sport, regions]);
 
+  // Sorting function
+  const handleSort = (column) => {
+    console.log("Sorting by:", column, "Current:", sortBy, sortOrder);
+    if (sortBy === column) {
+      const newOrder = sortOrder === "asc" ? "desc" : "asc";
+      setSortOrder(newOrder);
+      console.log("Changed order to:", newOrder);
+    } else {
+      setSortBy(column);
+      setSortOrder("desc");
+      console.log("Changed column to:", column, "order: desc");
+    }
+  };
+
   // Auto-refresh with countdown
   useEffect(() => {
     const interval = setInterval(() => {
@@ -97,7 +113,7 @@ export default function App() {
   }, [activeTab, onlyOpen, sport, regions]);
 
   const filtered = useMemo(() => {
-    const filtered = rows.filter((m) => {
+    let filtered = rows.filter((m) => {
       const q = query.trim().toLowerCase();
       const byText =
         !q ||
@@ -108,9 +124,64 @@ export default function App() {
       return byText && byLiq;
     });
 
+    // Apply sorting
+    console.log("Applying sort - sortBy:", sortBy, "sortOrder:", sortOrder);
+    filtered.sort((a, b) => {
+      let aVal, bVal;
+
+      switch (sortBy) {
+        case "liquidity":
+          aVal = Number(a.liquidity || 0);
+          bVal = Number(b.liquidity || 0);
+          break;
+        case "date":
+          aVal = new Date(
+            a.end_date || a.commence_time || "1970-01-01"
+          ).getTime();
+          bVal = new Date(
+            b.end_date || b.commence_time || "1970-01-01"
+          ).getTime();
+          // Debug date sorting
+          if (Math.random() < 0.01) { // Log 1% of comparisons
+            console.log("Date sort:", a.title?.substring(0, 20), "vs", b.title?.substring(0, 20), 
+                       "dates:", a.end_date || a.commence_time, "vs", b.end_date || b.commence_time);
+          }
+          break;
+        case "title":
+          aVal = (a.title || "").toLowerCase();
+          bVal = (b.title || "").toLowerCase();
+          break;
+        case "volume":
+          aVal = Number(a.volume || 0);
+          bVal = Number(b.volume || 0);
+          break;
+        default:
+          aVal = new Date(
+            a.end_date || a.commence_time || "1970-01-01"
+          ).getTime();
+          bVal = new Date(
+            b.end_date || b.commence_time || "1970-01-01"
+          ).getTime();
+      }
+
+      if (typeof aVal === "string") {
+        if (sortOrder === "asc") {
+          return aVal.localeCompare(bVal);
+        } else {
+          return bVal.localeCompare(aVal);
+        }
+      } else {
+        if (sortOrder === "asc") {
+          return aVal - bVal;
+        } else {
+          return bVal - aVal;
+        }
+      }
+    });
+
     // Apply display limit
     return filtered.slice(0, displayLimit);
-  }, [rows, query, minLiquidity, displayLimit]);
+  }, [rows, query, minLiquidity, displayLimit, sortBy, sortOrder]);
 
   // JSON preview data
   const jsonPreviewData = useMemo(() => {
@@ -218,8 +289,6 @@ export default function App() {
         margin: "0 auto",
       }}
     >
-      <h1>Rain Copy Pools System</h1>
-
       {/* Tab Interface */}
       <div style={{ marginBottom: 20 }}>
         <div style={{ display: "flex", borderBottom: "2px solid #e9ecef" }}>
@@ -419,12 +488,18 @@ export default function App() {
       )}
 
       {!loading && !error && (
-        <div style={{ display: "flex", gap: 16 }}>
+        <div style={{ display: "flex", gap: 16, height: "65vh" }}>
           {/* Main table - 70% width */}
-          <div style={{ flex: "0 0 70%" }}>
+          <div
+            style={{
+              flex: "0 0 70%",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
             <div
               style={{
-                maxHeight: "70vh",
+                height: "100%",
                 overflowY: "auto",
                 border: "1px solid #ddd",
                 borderRadius: 4,
@@ -441,13 +516,34 @@ export default function App() {
                 >
                   <tr>
                     <Th style={{ width: 50 }}>Select</Th>
+                    <Th
+                      style={{ cursor: "pointer" }}
+                      onClick={() => handleSort("date")}
+                    >
+                      Date{" "}
+                      {sortBy === "date"
+                        ? sortOrder === "asc"
+                          ? "↑"
+                          : "↓"
+                        : ""}
+                    </Th>
                     <Th>Title</Th>
                     <Th>Category</Th>
                     <Th>Status</Th>
-                    {activeTab === "polymarket" && <Th>Liquidity</Th>}
-                    {activeTab === "bet365" && <Th>Commence Time</Th>}
+                    {activeTab === "polymarket" && (
+                      <Th
+                        style={{ cursor: "pointer" }}
+                        onClick={() => handleSort("liquidity")}
+                      >
+                        Liquidity{" "}
+                        {sortBy === "liquidity"
+                          ? sortOrder === "asc"
+                            ? "↑"
+                            : "↓"
+                          : ""}
+                      </Th>
+                    )}
                     <Th>Top outcomes</Th>
-                    <Th>Link</Th>
                     <Th style={{ width: 80 }}>Rain</Th>
                   </tr>
                 </thead>
@@ -474,30 +570,13 @@ export default function App() {
                           }
                         />
                       </Td>
-                      <Td>
-                        {newMarkets.has(m.market_id) && (
-                          <span
-                            style={{
-                              backgroundColor: "#28a745",
-                              color: "white",
-                              fontSize: 10,
-                              fontWeight: 600,
-                              padding: "2px 6px",
-                              borderRadius: 3,
-                              marginRight: 8,
-                            }}
-                          >
-                            NEW
-                          </span>
-                        )}
-                        {m.title}
-                      </Td>
+                      <Td>{fmtDate(m.end_date || m.commence_time)}</Td>
+                      <Td>{m.title}</Td>
                       <Td>{m.category || "—"}</Td>
                       <Td>{m.status}</Td>
                       {activeTab === "polymarket" && (
                         <Td>{fmtNumber(m.liquidity) || "—"}</Td>
                       )}
-                      {activeTab === "bet365" && <Td>{fmtDate(m.end_date)}</Td>}
                       <Td>
                         {(m.outcomes || []).slice(0, 3).map((o, i) => (
                           <span
@@ -510,15 +589,6 @@ export default function App() {
                               : "—"}
                           </span>
                         ))}
-                      </Td>
-                      <Td>
-                        {m.url ? (
-                          <a href={m.url} target="_blank" rel="noreferrer">
-                            Open
-                          </a>
-                        ) : (
-                          "—"
-                        )}
                       </Td>
                       <Td>
                         <input
@@ -551,7 +621,14 @@ export default function App() {
           </div>
 
           {/* JSON Preview - 30% width */}
-          <div style={{ flex: "0 0 30%" }}>
+          <div
+            style={{
+              flex: "0 0 30%",
+              display: "flex",
+              flexDirection: "column",
+              height: "100%",
+            }}
+          >
             {/* Export to Rain Button */}
             <button
               onClick={exportToRain}
@@ -567,6 +644,7 @@ export default function App() {
                 cursor: selectedMarkets.size > 0 ? "pointer" : "not-allowed",
                 fontSize: 14,
                 fontWeight: 600,
+                flexShrink: 0,
               }}
             >
               🌧️ Export to Rain ({selectedMarkets.size})
@@ -577,6 +655,9 @@ export default function App() {
                 border: "1px solid #ddd",
                 borderRadius: 4,
                 backgroundColor: "#f8f9fa",
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
               }}
             >
               <div
@@ -585,13 +666,14 @@ export default function App() {
                   borderBottom: "1px solid #ddd",
                   backgroundColor: "#e9ecef",
                   fontWeight: 600,
+                  flexShrink: 0,
                 }}
               >
                 JSON Preview ({jsonPreviewData.length} selected)
               </div>
               <div
                 style={{
-                  maxHeight: "70vh",
+                  flex: 1,
                   overflowY: "auto",
                   padding: 12,
                 }}
