@@ -490,7 +490,8 @@ label {
   }
 
   /* Loading and error states */
-  .loading, .error {
+  .loading,
+  .error {
     text-align: center !important;
     padding: 20px !important;
     font-size: 14px !important;
@@ -506,19 +507,19 @@ label {
     table {
       min-width: 700px !important;
     }
-    
+
     .title-column {
       max-width: 120px !important;
     }
-    
+
     .outcomes-column {
       max-width: 100px !important;
     }
-    
+
     .category-column {
       width: 60px !important;
     }
-    
+
     .status-column {
       width: 50px !important;
     }
@@ -529,16 +530,16 @@ label {
     .main-content {
       flex-direction: row !important;
     }
-    
+
     .table-container {
       flex: 1 !important;
     }
-    
+
     .json-container {
       width: 300px !important;
       flex: none !important;
     }
-    
+
     .table-wrapper {
       height: 50vh !important;
     }
@@ -550,24 +551,24 @@ label {
   .main-container {
     padding: 16px !important;
   }
-  
+
   .main-content {
     height: 70vh !important;
   }
-  
+
   .table-wrapper {
     height: 100% !important;
   }
-  
+
   table {
     font-size: 13px !important;
   }
-  
+
   thead th {
     padding: 10px 6px !important;
     font-size: 12px !important;
   }
-  
+
   tbody td {
     padding: 8px 6px !important;
     font-size: 12px !important;
@@ -584,10 +585,12 @@ label {
 
 /* High contrast mode support */
 @media (prefers-contrast: high) {
-  table, th, td {
+  table,
+  th,
+  td {
     border: 2px solid !important;
   }
-  
+
   .sort-arrow {
     font-weight: bold !important;
   }
@@ -599,29 +602,29 @@ label {
     background: #1a1a1a !important;
     border-color: #444 !important;
   }
-  
+
   thead th {
     background: #2a2a2a !important;
     color: #fff !important;
     border-color: #444 !important;
   }
-  
+
   tbody td {
     background: #1a1a1a !important;
     color: #fff !important;
     border-color: #333 !important;
   }
-  
+
   .json-preview {
     background: #1a1a1a !important;
     border-color: #444 !important;
   }
-  
+
   .json-header {
     background: #2a2a2a !important;
     color: #fff !important;
   }
-  
+
   body {
     background-color: #1a1a1a !important;
     color: #ffffff !important;

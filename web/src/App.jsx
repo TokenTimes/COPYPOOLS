@@ -307,7 +307,9 @@ export default function App() {
       <div style={{ marginBottom: 20 }}>
         <div style={{ display: "flex", borderBottom: "2px solid #e9ecef" }}>
           <button
-            className={`tab-button ${activeTab === "polymarket" ? "active" : ""}`}
+            className={`tab-button ${
+              activeTab === "polymarket" ? "active" : ""
+            }`}
             onClick={() => setActiveTab("polymarket")}
             style={{
               padding: "12px 24px",
@@ -436,7 +438,7 @@ export default function App() {
           border: "1px solid #cce7ff",
         }}
       >
-        <label 
+        <label
           className="select-all-label"
           style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
         >
@@ -463,37 +465,29 @@ export default function App() {
         >
           Export Selected to JSON ({selectedMarkets.size})
         </button>
-      </div>
-
-      {/* Auto-refresh countdown */}
-      <div
-        className="status-bar"
-        style={{
-          marginBottom: 12,
-          padding: 8,
-          backgroundColor: newMarkets.size > 0 ? "#d4edda" : "#e8f4fd",
-          borderRadius: 4,
-          textAlign: "center",
-          fontSize: 14,
-          color: newMarkets.size > 0 ? "#155724" : "#0066cc",
-          border: newMarkets.size > 0 ? "1px solid #c3e6cb" : "none",
-        }}
-      >
-        {newMarkets.size > 0 ? (
-          <>
-            🆕 {newMarkets.size} new pool{newMarkets.size > 1 ? "s" : ""}{" "}
-            discovered! | Next refresh in {formatCountdown(countdown)}
-          </>
-        ) : (
-          <>
-            🔄 Auto-refresh in {formatCountdown(countdown)} | Scanning for new
-            pools...
-          </>
-        )}
+        <button
+          className="export-button"
+          onClick={exportToRain}
+          disabled={selectedMarkets.size === 0}
+          style={{
+            padding: "8px 16px",
+            backgroundColor: selectedMarkets.size > 0 ? "#28a745" : "#ccc",
+            color: "white",
+            border: "none",
+            borderRadius: 4,
+            cursor: selectedMarkets.size > 0 ? "pointer" : "not-allowed",
+          }}
+        >
+          🌧️ Export to Rain ({selectedMarkets.size})
+        </button>
       </div>
 
       {loading && <p className="loading">Loading…</p>}
-      {error && <p className="error" style={{ color: "crimson" }}>{error}</p>}
+      {error && (
+        <p className="error" style={{ color: "crimson" }}>
+          {error}
+        </p>
+      )}
 
       {!loading && !error && (
         <>
@@ -532,6 +526,7 @@ export default function App() {
               flex: "0 0 70%",
               display: "flex",
               flexDirection: "column",
+              height: "100%",
             }}
           >
             <div
@@ -587,24 +582,23 @@ export default function App() {
                       </span>
                     </Th>
                     <Th className="title-column">Title</Th>
-                    <Th className="category-column">Category</Th>
                     <Th className="status-column">Status</Th>
-                                          {activeTab === "polymarket" && (
-                        <Th
-                          className="liquidity-column clickable"
-                          style={{
-                            cursor: "pointer",
-                            userSelect: "none",
-                            transition: "background-color 0.2s",
-                          }}
-                          onClick={() => handleSort("liquidity")}
-                          onMouseOver={(e) =>
-                            (e.target.style.backgroundColor = "#e9ecef")
-                          }
-                          onMouseOut={(e) =>
-                            (e.target.style.backgroundColor = "#fafafa")
-                          }
-                        >
+                    {activeTab === "polymarket" && (
+                      <Th
+                        className="liquidity-column clickable"
+                        style={{
+                          cursor: "pointer",
+                          userSelect: "none",
+                          transition: "background-color 0.2s",
+                        }}
+                        onClick={() => handleSort("liquidity")}
+                        onMouseOver={(e) =>
+                          (e.target.style.backgroundColor = "#e9ecef")
+                        }
+                        onMouseOut={(e) =>
+                          (e.target.style.backgroundColor = "#fafafa")
+                        }
+                      >
                         Liquidity{" "}
                         <span
                           style={{
@@ -621,7 +615,9 @@ export default function App() {
                       </Th>
                     )}
                     <Th className="outcomes-column">Top outcomes</Th>
-                    <Th className="rain-column" style={{ width: 80 }}>Rain</Th>
+                    <Th className="rain-column" style={{ width: 80 }}>
+                      Rain
+                    </Th>
                   </tr>
                 </thead>
                 <tbody>
@@ -649,7 +645,6 @@ export default function App() {
                       </Td>
                       <Td>{fmtDate(m.end_date || m.commence_time)}</Td>
                       <Td>{m.title}</Td>
-                      <Td>{m.category || "—"}</Td>
                       <Td>{m.status}</Td>
                       {activeTab === "polymarket" && (
                         <Td>{fmtNumber(m.liquidity) || "—"}</Td>
@@ -699,6 +694,7 @@ export default function App() {
 
           {/* JSON Preview - 30% width */}
           <div
+            className="json-preview-container"
             style={{
               flex: "0 0 30%",
               display: "flex",
@@ -706,35 +702,13 @@ export default function App() {
               height: "100%",
             }}
           >
-            {/* Export to Rain Button */}
-            <button
-              className="export-button"
-              onClick={exportToRain}
-              disabled={selectedMarkets.size === 0}
-              style={{
-                width: "100%",
-                padding: "12px 16px",
-                marginBottom: 12,
-                backgroundColor: selectedMarkets.size > 0 ? "#28a745" : "#ccc",
-                color: "white",
-                border: "none",
-                borderRadius: 4,
-                cursor: selectedMarkets.size > 0 ? "pointer" : "not-allowed",
-                fontSize: 14,
-                fontWeight: 600,
-                flexShrink: 0,
-              }}
-            >
-              🌧️ Export to Rain ({selectedMarkets.size})
-            </button>
-
             <div
               className="json-preview"
               style={{
                 border: "1px solid #ddd",
                 borderRadius: 4,
                 backgroundColor: "#f8f9fa",
-                flex: 1,
+                height: "100%",
                 display: "flex",
                 flexDirection: "column",
               }}
