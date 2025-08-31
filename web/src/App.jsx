@@ -17,7 +17,7 @@ export default function App() {
     const saved = localStorage.getItem("polymarket-rain-memory");
     return saved ? new Set(JSON.parse(saved)) : new Set();
   });
-  const [countdown, setCountdown] = useState(30);
+  const [countdown, setCountdown] = useState(3600); // 60 minutes = 3600 seconds
   const [activeTab, setActiveTab] = useState("polymarket");
   const [sport, setSport] = useState("soccer_epl");
   const [sortBy, setSortBy] = useState("date");
@@ -82,6 +82,21 @@ export default function App() {
     fetchData();
   }, [activeTab, onlyOpen, sport, regions]);
 
+  // Format countdown time
+  const formatCountdown = (seconds) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    
+    if (hours > 0) {
+      return `${hours}h ${minutes}m ${secs}s`;
+    } else if (minutes > 0) {
+      return `${minutes}m ${secs}s`;
+    } else {
+      return `${secs}s`;
+    }
+  };
+
   // Sorting function
   const handleSort = (column) => {
     console.log("Sorting by:", column, "Current:", sortBy, sortOrder);
@@ -103,7 +118,7 @@ export default function App() {
         if (prev <= 1) {
           // Trigger refresh with new pool detection
           fetchData(true);
-          return 30; // Reset countdown
+          return 3600; // Reset countdown to 60 minutes
         }
         return prev - 1;
       });
@@ -142,9 +157,18 @@ export default function App() {
             b.end_date || b.commence_time || "1970-01-01"
           ).getTime();
           // Debug date sorting
-          if (Math.random() < 0.01) { // Log 1% of comparisons
-            console.log("Date sort:", a.title?.substring(0, 20), "vs", b.title?.substring(0, 20), 
-                       "dates:", a.end_date || a.commence_time, "vs", b.end_date || b.commence_time);
+          if (Math.random() < 0.01) {
+            // Log 1% of comparisons
+            console.log(
+              "Date sort:",
+              a.title?.substring(0, 20),
+              "vs",
+              b.title?.substring(0, 20),
+              "dates:",
+              a.end_date || a.commence_time,
+              "vs",
+              b.end_date || b.commence_time
+            );
           }
           break;
         case "title":
@@ -453,10 +477,10 @@ export default function App() {
         {newMarkets.size > 0 ? (
           <>
             🆕 {newMarkets.size} new pool{newMarkets.size > 1 ? "s" : ""}{" "}
-            discovered! | Next refresh in {countdown}s
+            discovered! | Next refresh in {formatCountdown(countdown)}
           </>
         ) : (
-          <>🔄 Auto-refresh in {countdown}s | Scanning for new pools...</>
+          <>🔄 Auto-refresh in {formatCountdown(countdown)} | Scanning for new pools...</>
         )}
       </div>
 
@@ -517,30 +541,47 @@ export default function App() {
                   <tr>
                     <Th style={{ width: 50 }}>Select</Th>
                     <Th
-                      style={{ cursor: "pointer" }}
+                      style={{ 
+                        cursor: "pointer",
+                        userSelect: "none",
+                        transition: "background-color 0.2s",
+                        "&:hover": { backgroundColor: "#e9ecef" }
+                      }}
                       onClick={() => handleSort("date")}
+                      onMouseOver={(e) => e.target.style.backgroundColor = "#e9ecef"}
+                      onMouseOut={(e) => e.target.style.backgroundColor = "#fafafa"}
                     >
                       Date{" "}
-                      {sortBy === "date"
-                        ? sortOrder === "asc"
-                          ? "↑"
-                          : "↓"
-                        : ""}
+                      <span style={{ color: sortBy === "date" ? "#007bff" : "#6c757d" }}>
+                        {sortBy === "date"
+                          ? sortOrder === "asc"
+                            ? "↑"
+                            : "↓"
+                          : "↕"}
+                      </span>
                     </Th>
                     <Th>Title</Th>
                     <Th>Category</Th>
                     <Th>Status</Th>
                     {activeTab === "polymarket" && (
                       <Th
-                        style={{ cursor: "pointer" }}
+                        style={{ 
+                          cursor: "pointer",
+                          userSelect: "none",
+                          transition: "background-color 0.2s"
+                        }}
                         onClick={() => handleSort("liquidity")}
+                        onMouseOver={(e) => e.target.style.backgroundColor = "#e9ecef"}
+                        onMouseOut={(e) => e.target.style.backgroundColor = "#fafafa"}
                       >
                         Liquidity{" "}
-                        {sortBy === "liquidity"
-                          ? sortOrder === "asc"
-                            ? "↑"
-                            : "↓"
-                          : ""}
+                        <span style={{ color: sortBy === "liquidity" ? "#007bff" : "#6c757d" }}>
+                          {sortBy === "liquidity"
+                            ? sortOrder === "asc"
+                              ? "↑"
+                              : "↓"
+                            : "↕"}
+                        </span>
                       </Th>
                     )}
                     <Th>Top outcomes</Th>
@@ -713,7 +754,7 @@ export default function App() {
   );
 }
 
-function Th({ children, style = {} }) {
+function Th({ children, style = {}, onClick, ...props }) {
   return (
     <th
       style={{
@@ -724,6 +765,8 @@ function Th({ children, style = {} }) {
         background: "#fafafa",
         ...style,
       }}
+      onClick={onClick}
+      {...props}
     >
       {children}
     </th>
