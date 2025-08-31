@@ -14,6 +14,17 @@ export default function App() {
   const [onlyOpen, setOnlyOpen] = useState(true);
   const [selectedMarkets, setSelectedMarkets] = useState(new Set());
   const [displayLimit, setDisplayLimit] = useState(50);
+  
+  // Separate memory for each tab's selections
+  const [polymarketSelections, setPolymarketSelections] = useState(() => {
+    const saved = localStorage.getItem("polymarket-selections");
+    return saved ? new Set(JSON.parse(saved)) : new Set();
+  });
+  const [bet365Selections, setBet365Selections] = useState(() => {
+    const saved = localStorage.getItem("bet365-selections");
+    return saved ? new Set(JSON.parse(saved)) : new Set();
+  });
+  
   const [rainMemory, setRainMemory] = useState(() => {
     const saved = localStorage.getItem("polymarket-rain-memory");
     return saved ? new Set(JSON.parse(saved)) : new Set();
@@ -26,6 +37,10 @@ export default function App() {
   const [regions, setRegions] = useState("uk,eu");
   const [previousMarkets, setPreviousMarkets] = useState(new Set());
   const [newMarkets, setNewMarkets] = useState(new Set());
+  
+  // Store all data from both tabs for cross-tab access
+  const [allPolymarketData, setAllPolymarketData] = useState([]);
+  const [allBet365Data, setAllBet365Data] = useState([]);
 
   // Fetch data based on active tab
   const fetchData = async (isRefresh = false) => {
@@ -72,6 +87,13 @@ export default function App() {
 
       setPreviousMarkets(currentMarketIds);
       setRows(newData);
+      
+      // Store data for cross-tab access
+      if (activeTab === "polymarket") {
+        setAllPolymarketData(newData);
+      } else {
+        setAllBet365Data(newData);
+      }
     } catch (e) {
       setError(String(e.message || e));
     } finally {
@@ -97,6 +119,24 @@ export default function App() {
       return `${secs}s`;
     }
   };
+
+  // Sync selectedMarkets with tab-specific memory
+  useEffect(() => {
+    if (activeTab === "polymarket") {
+      setSelectedMarkets(polymarketSelections);
+    } else {
+      setSelectedMarkets(bet365Selections);
+    }
+  }, [activeTab, polymarketSelections, bet365Selections]);
+
+  // Save selections to localStorage when they change
+  useEffect(() => {
+    localStorage.setItem("polymarket-selections", JSON.stringify([...polymarketSelections]));
+  }, [polymarketSelections]);
+
+  useEffect(() => {
+    localStorage.setItem("bet365-selections", JSON.stringify([...bet365Selections]));
+  }, [bet365Selections]);
 
   // Sorting function
   const handleSort = (column) => {
@@ -208,28 +248,43 @@ export default function App() {
     return filtered.slice(0, displayLimit);
   }, [rows, query, minLiquidity, displayLimit, sortBy, sortOrder]);
 
-  // JSON preview data
+  // JSON preview data - includes selections from both tabs
   const jsonPreviewData = useMemo(() => {
-    const selectedData = filtered.filter((m) =>
-      selectedMarkets.has(m.market_id)
+    const allSelectedData = [];
+    
+    // Add selected Polymarket data
+    const polymarketSelected = allPolymarketData.filter((m) =>
+      polymarketSelections.has(m.market_id)
     );
+    allSelectedData.push(...polymarketSelected);
+    
+    // Add selected Bet365 data
+    const bet365Selected = allBet365Data.filter((m) =>
+      bet365Selections.has(m.market_id)
+    );
+    allSelectedData.push(...bet365Selected);
 
-    return selectedData.map((market) => ({
+    return allSelectedData.map((market) => ({
       question: market.title,
       options: market.outcomes?.map((outcome) => outcome.name) || [],
     }));
-  }, [filtered, selectedMarkets]);
+  }, [allPolymarketData, allBet365Data, polymarketSelections, bet365Selections]);
 
   // Selection handlers
   const handleSelectAll = (checked) => {
-    if (checked) {
-      setSelectedMarkets(new Set(filtered.map((m) => m.market_id)));
+    const newSelected = checked ? new Set(filtered.map((m) => m.market_id)) : new Set();
+    setSelectedMarkets(newSelected);
+    
+    // Update the appropriate tab's memory
+    if (activeTab === "polymarket") {
+      setPolymarketSelections(newSelected);
     } else {
-      setSelectedMarkets(new Set());
+      setBet365Selections(newSelected);
     }
   };
 
   const handleSelectMarket = (marketId, checked) => {
+    // Update the current tab's selections
     const newSelected = new Set(selectedMarkets);
     if (checked) {
       newSelected.add(marketId);
@@ -237,6 +292,13 @@ export default function App() {
       newSelected.delete(marketId);
     }
     setSelectedMarkets(newSelected);
+    
+    // Update the appropriate tab's memory
+    if (activeTab === "polymarket") {
+      setPolymarketSelections(newSelected);
+    } else {
+      setBet365Selections(newSelected);
+    }
   };
 
   // Export to JSON
@@ -449,36 +511,36 @@ export default function App() {
             }
             onChange={(e) => handleSelectAll(e.target.checked)}
           />
-          Select All ({selectedMarkets.size} selected)
+          Select All ({selectedMarkets.size} selected | Total: {polymarketSelections.size + bet365Selections.size})
         </label>
         <button
           onClick={exportToJSON}
-          disabled={selectedMarkets.size === 0}
+          disabled={polymarketSelections.size + bet365Selections.size === 0}
           style={{
             padding: "8px 16px",
-            backgroundColor: selectedMarkets.size > 0 ? "#007bff" : "#ccc",
+            backgroundColor: polymarketSelections.size + bet365Selections.size > 0 ? "#007bff" : "#ccc",
             color: "white",
             border: "none",
             borderRadius: 4,
-            cursor: selectedMarkets.size > 0 ? "pointer" : "not-allowed",
+            cursor: polymarketSelections.size + bet365Selections.size > 0 ? "pointer" : "not-allowed",
           }}
         >
-          Export Selected to JSON ({selectedMarkets.size})
+          Export Selected to JSON ({polymarketSelections.size + bet365Selections.size})
         </button>
         <button
           className="export-button"
           onClick={exportToRain}
-          disabled={selectedMarkets.size === 0}
+          disabled={polymarketSelections.size + bet365Selections.size === 0}
           style={{
             padding: "8px 16px",
-            backgroundColor: selectedMarkets.size > 0 ? "#28a745" : "#ccc",
+            backgroundColor: polymarketSelections.size + bet365Selections.size > 0 ? "#28a745" : "#ccc",
             color: "white",
             border: "none",
             borderRadius: 4,
-            cursor: selectedMarkets.size > 0 ? "pointer" : "not-allowed",
+            cursor: polymarketSelections.size + bet365Selections.size > 0 ? "pointer" : "not-allowed",
           }}
         >
-          🌧️ Export to Rain ({selectedMarkets.size})
+          🌧️ Export to Rain ({polymarketSelections.size + bet365Selections.size})
         </button>
       </div>
 
