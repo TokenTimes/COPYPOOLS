@@ -216,7 +216,7 @@ export default function App() {
 
     return selectedData.map((market) => ({
       question: market.title,
-      options: market.outcomes?.map((outcome) => outcome.name) || []
+      options: market.outcomes?.map((outcome) => outcome.name) || [],
     }));
   }, [filtered, selectedMarkets]);
 
@@ -307,6 +307,7 @@ export default function App() {
       <div style={{ marginBottom: 20 }}>
         <div style={{ display: "flex", borderBottom: "2px solid #e9ecef" }}>
           <button
+            className={`tab-button ${activeTab === "polymarket" ? "active" : ""}`}
             onClick={() => setActiveTab("polymarket")}
             style={{
               padding: "12px 24px",
@@ -324,6 +325,7 @@ export default function App() {
             📊 Polymarket
           </button>
           <button
+            className={`tab-button ${activeTab === "bet365" ? "active" : ""}`}
             onClick={() => setActiveTab("bet365")}
             style={{
               padding: "12px 24px",
@@ -343,15 +345,19 @@ export default function App() {
       </div>
 
       <div
+        className="controls-section"
         style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 12 }}
       >
         <input
+          className="control-input"
+          type="text"
           placeholder="Search title or category…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           style={{ padding: 8, minWidth: 280 }}
         />
         <input
+          className="control-input"
           type="number"
           min={0}
           placeholder="Min liquidity"
@@ -360,6 +366,7 @@ export default function App() {
           style={{ padding: 8, width: 160 }}
         />
         <select
+          className="control-input"
           value={displayLimit}
           onChange={(e) => setDisplayLimit(Number(e.target.value))}
           style={{ padding: 8, width: 120 }}
@@ -390,6 +397,7 @@ export default function App() {
         {activeTab === "bet365" && (
           <>
             <select
+              className="control-input"
               value={sport}
               onChange={(e) => setSport(e.target.value)}
               style={{ padding: 8, width: 180 }}
@@ -403,6 +411,8 @@ export default function App() {
               <option value="tennis_atp">ATP Tennis</option>
             </select>
             <input
+              className="control-input"
+              type="text"
               value={regions}
               onChange={(e) => setRegions(e.target.value)}
               style={{ padding: 8, width: 120 }}
@@ -414,6 +424,7 @@ export default function App() {
 
       {/* Export controls */}
       <div
+        className="select-all-box"
         style={{
           display: "flex",
           gap: 12,
@@ -425,7 +436,10 @@ export default function App() {
           border: "1px solid #cce7ff",
         }}
       >
-        <label style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+        <label 
+          className="select-all-label"
+          style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
+        >
           <input
             type="checkbox"
             checked={
@@ -453,6 +467,7 @@ export default function App() {
 
       {/* Auto-refresh countdown */}
       <div
+        className="status-bar"
         style={{
           marginBottom: 12,
           padding: 8,
@@ -477,12 +492,13 @@ export default function App() {
         )}
       </div>
 
-      {loading && <p>Loading…</p>}
-      {error && <p style={{ color: "crimson" }}>{error}</p>}
+      {loading && <p className="loading">Loading…</p>}
+      {error && <p className="error" style={{ color: "crimson" }}>{error}</p>}
 
       {!loading && !error && (
         <>
           <div
+            className="showing-markets-box"
             style={{
               marginBottom: 16,
               padding: 12,
@@ -505,7 +521,10 @@ export default function App() {
       )}
 
       {!loading && !error && (
-        <div className="main-content" style={{ display: "flex", gap: 16, height: "65vh" }}>
+        <div
+          className="main-content"
+          style={{ display: "flex", gap: 16, height: "65vh" }}
+        >
           {/* Main table - 70% width */}
           <div
             className="table-container"
@@ -534,7 +553,9 @@ export default function App() {
                   }}
                 >
                   <tr>
-                    <Th className="select-column" style={{ width: 50 }}>Select</Th>
+                    <Th className="select-column" style={{ width: 50 }}>
+                      Select
+                    </Th>
                     <Th
                       className="date-column clickable"
                       style={{
@@ -568,21 +589,22 @@ export default function App() {
                     <Th className="title-column">Title</Th>
                     <Th className="category-column">Category</Th>
                     <Th className="status-column">Status</Th>
-                    {activeTab === "polymarket" && (
-                      <Th
-                        style={{
-                          cursor: "pointer",
-                          userSelect: "none",
-                          transition: "background-color 0.2s",
-                        }}
-                        onClick={() => handleSort("liquidity")}
-                        onMouseOver={(e) =>
-                          (e.target.style.backgroundColor = "#e9ecef")
-                        }
-                        onMouseOut={(e) =>
-                          (e.target.style.backgroundColor = "#fafafa")
-                        }
-                      >
+                                          {activeTab === "polymarket" && (
+                        <Th
+                          className="liquidity-column clickable"
+                          style={{
+                            cursor: "pointer",
+                            userSelect: "none",
+                            transition: "background-color 0.2s",
+                          }}
+                          onClick={() => handleSort("liquidity")}
+                          onMouseOver={(e) =>
+                            (e.target.style.backgroundColor = "#e9ecef")
+                          }
+                          onMouseOut={(e) =>
+                            (e.target.style.backgroundColor = "#fafafa")
+                          }
+                        >
                         Liquidity{" "}
                         <span
                           style={{
@@ -598,8 +620,8 @@ export default function App() {
                         </span>
                       </Th>
                     )}
-                    <Th>Top outcomes</Th>
-                    <Th style={{ width: 80 }}>Rain</Th>
+                    <Th className="outcomes-column">Top outcomes</Th>
+                    <Th className="rain-column" style={{ width: 80 }}>Rain</Th>
                   </tr>
                 </thead>
                 <tbody>
@@ -686,6 +708,7 @@ export default function App() {
           >
             {/* Export to Rain Button */}
             <button
+              className="export-button"
               onClick={exportToRain}
               disabled={selectedMarkets.size === 0}
               style={{
@@ -706,6 +729,7 @@ export default function App() {
             </button>
 
             <div
+              className="json-preview"
               style={{
                 border: "1px solid #ddd",
                 borderRadius: 4,
@@ -716,6 +740,7 @@ export default function App() {
               }}
             >
               <div
+                className="json-header"
                 style={{
                   padding: 12,
                   borderBottom: "1px solid #ddd",
@@ -727,6 +752,7 @@ export default function App() {
                 JSON Preview ({jsonPreviewData.length} selected)
               </div>
               <div
+                className="json-content"
                 style={{
                   flex: 1,
                   overflowY: "auto",

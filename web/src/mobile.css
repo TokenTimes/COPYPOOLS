@@ -1,5 +1,223 @@
 /* Mobile Responsive CSS for Polymarket Scanner */
 
+/* Dark Mode Global Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+}
+
+/* Dark Mode Base Styles */
+.main-container {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+}
+
+/* Dark Mode Components */
+.tab-button {
+  background-color: #2a2a2a !important;
+  color: #ffffff !important;
+  border: 1px solid #444 !important;
+}
+
+.tab-button.active {
+  background-color: #007bff !important;
+  color: #ffffff !important;
+}
+
+.controls-section {
+  background-color: #2a2a2a !important;
+  border: 1px solid #444 !important;
+  border-radius: 6px !important;
+  padding: 16px !important;
+}
+
+.control-input {
+  background-color: #333 !important;
+  color: #ffffff !important;
+  border: 1px solid #555 !important;
+}
+
+.control-input:focus {
+  border-color: #007bff !important;
+  outline: none !important;
+}
+
+.status-bar {
+  background-color: #2a2a2a !important;
+  color: #ffffff !important;
+  border: 1px solid #444 !important;
+}
+
+.table-wrapper {
+  background-color: #1a1a1a !important;
+  border: 1px solid #444 !important;
+}
+
+table {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+}
+
+thead th {
+  background-color: #2a2a2a !important;
+  color: #ffffff !important;
+  border-bottom: 2px solid #444 !important;
+}
+
+tbody td {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid #333 !important;
+}
+
+tbody tr:hover {
+  background-color: #2a2a2a !important;
+}
+
+.export-button {
+  background-color: #28a745 !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+.export-button:disabled {
+  background-color: #555 !important;
+  color: #999 !important;
+}
+
+.json-preview {
+  background-color: #1a1a1a !important;
+  border: 1px solid #444 !important;
+}
+
+.json-header {
+  background-color: #2a2a2a !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid #444 !important;
+}
+
+.json-content {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+}
+
+.json-content pre {
+  color: #ffffff !important;
+}
+
+input[type="checkbox"] {
+  accent-color: #007bff !important;
+}
+
+button {
+  background-color: #2a2a2a !important;
+  color: #ffffff !important;
+  border: 1px solid #444 !important;
+}
+
+button:hover {
+  background-color: #3a3a3a !important;
+}
+
+button:active {
+  background-color: #007bff !important;
+}
+
+/* Info boxes and status displays */
+.info-box {
+  background-color: #2a2a2a !important;
+  color: #ffffff !important;
+  border: 1px solid #444 !important;
+}
+
+.select-all-box {
+  background-color: #2a2a2a !important;
+  color: #ffffff !important;
+  border: 1px solid #444 !important;
+}
+
+.showing-markets-box {
+  background-color: #2a2a2a !important;
+  color: #ffffff !important;
+  border: 1px solid #444 !important;
+}
+
+/* All input elements dark mode */
+input[type="text"],
+input[type="number"],
+input[type="search"],
+select,
+textarea {
+  background-color: #333 !important;
+  color: #ffffff !important;
+  border: 1px solid #555 !important;
+  border-radius: 4px !important;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="search"]:focus,
+select:focus,
+textarea:focus {
+  border-color: #007bff !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25) !important;
+}
+
+input[type="text"]::placeholder,
+input[type="number"]::placeholder,
+input[type="search"]::placeholder,
+textarea::placeholder {
+  color: #999 !important;
+}
+
+/* Select dropdown arrow styling */
+select {
+  appearance: none !important;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 8px center !important;
+  background-size: 16px !important;
+  padding-right: 32px !important;
+}
+
+/* Checkbox styling for dark mode */
+input[type="checkbox"] {
+  accent-color: #007bff !important;
+  background-color: #333 !important;
+  border: 1px solid #555 !important;
+}
+
+/* Labels and text elements */
+label {
+  color: #ffffff !important;
+}
+
+/* Loading and error messages */
+.loading {
+  color: #ffffff !important;
+  background-color: #2a2a2a !important;
+  border: 1px solid #444 !important;
+  padding: 16px !important;
+  border-radius: 4px !important;
+}
+
+.error {
+  color: #ff6b6b !important;
+  background-color: #2a2a2a !important;
+  border: 1px solid #ff6b6b !important;
+  padding: 16px !important;
+  border-radius: 4px !important;
+}
+
 /* Base mobile styles */
 @media (max-width: 768px) {
   * {
@@ -11,6 +229,8 @@
     padding: 0;
     font-size: 14px;
     line-height: 1.4;
+    background-color: #1a1a1a !important;
+    color: #ffffff !important;
   }
 
   /* Main container adjustments */
@@ -281,23 +501,26 @@
     font-size: clamp(10px, 2.5vw, 14px) !important;
   }
 
-  /* Hide less important columns on very small screens */
+  /* Very small screens - keep all columns but make them smaller */
   @media (max-width: 480px) {
-    .category-column,
-    .status-column {
-      display: none !important;
-    }
-    
     table {
-      min-width: 600px !important;
+      min-width: 700px !important;
     }
     
     .title-column {
-      max-width: 150px !important;
+      max-width: 120px !important;
     }
     
     .outcomes-column {
-      max-width: 120px !important;
+      max-width: 100px !important;
+    }
+    
+    .category-column {
+      width: 60px !important;
+    }
+    
+    .status-column {
+      width: 50px !important;
     }
   }
 
@@ -370,7 +593,7 @@
   }
 }
 
-/* Dark mode support */
+/* Enhanced Dark mode support */
 @media (prefers-color-scheme: dark) {
   .table-wrapper {
     background: #1a1a1a !important;
@@ -397,5 +620,10 @@
   .json-header {
     background: #2a2a2a !important;
     color: #fff !important;
+  }
+  
+  body {
+    background-color: #1a1a1a !important;
+    color: #ffffff !important;
   }
 }
