@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import "./mobile.css";
 
 const API_BASE =
   import.meta.env.VITE_API_BASE ||
@@ -87,7 +88,7 @@ export default function App() {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
-    
+
     if (hours > 0) {
       return `${hours}h ${minutes}m ${secs}s`;
     } else if (minutes > 0) {
@@ -215,19 +216,7 @@ export default function App() {
 
     return selectedData.map((market) => ({
       question: market.title,
-      market_id: market.market_id,
-      category: market.category,
-      status: market.status,
-      url: market.url,
-      options:
-        market.outcomes?.map((outcome) => ({
-          name: outcome.name,
-          probability: outcome.implied_prob,
-          price: outcome.price,
-        })) || [],
-      liquidity: market.liquidity,
-      volume: market.volume,
-      end_date: market.end_date,
+      options: market.outcomes?.map((outcome) => outcome.name) || []
     }));
   }, [filtered, selectedMarkets]);
 
@@ -306,6 +295,7 @@ export default function App() {
 
   return (
     <div
+      className="main-container"
       style={{
         fontFamily: "system-ui, -apple-system, Segoe UI, Roboto",
         padding: 16,
@@ -480,7 +470,10 @@ export default function App() {
             discovered! | Next refresh in {formatCountdown(countdown)}
           </>
         ) : (
-          <>🔄 Auto-refresh in {formatCountdown(countdown)} | Scanning for new pools...</>
+          <>
+            🔄 Auto-refresh in {formatCountdown(countdown)} | Scanning for new
+            pools...
+          </>
         )}
       </div>
 
@@ -512,9 +505,10 @@ export default function App() {
       )}
 
       {!loading && !error && (
-        <div style={{ display: "flex", gap: 16, height: "65vh" }}>
+        <div className="main-content" style={{ display: "flex", gap: 16, height: "65vh" }}>
           {/* Main table - 70% width */}
           <div
+            className="table-container"
             style={{
               flex: "0 0 70%",
               display: "flex",
@@ -522,6 +516,7 @@ export default function App() {
             }}
           >
             <div
+              className="table-wrapper"
               style={{
                 height: "100%",
                 overflowY: "auto",
@@ -539,20 +534,30 @@ export default function App() {
                   }}
                 >
                   <tr>
-                    <Th style={{ width: 50 }}>Select</Th>
+                    <Th className="select-column" style={{ width: 50 }}>Select</Th>
                     <Th
-                      style={{ 
+                      className="date-column clickable"
+                      style={{
                         cursor: "pointer",
                         userSelect: "none",
                         transition: "background-color 0.2s",
-                        "&:hover": { backgroundColor: "#e9ecef" }
+                        "&:hover": { backgroundColor: "#e9ecef" },
                       }}
                       onClick={() => handleSort("date")}
-                      onMouseOver={(e) => e.target.style.backgroundColor = "#e9ecef"}
-                      onMouseOut={(e) => e.target.style.backgroundColor = "#fafafa"}
+                      onMouseOver={(e) =>
+                        (e.target.style.backgroundColor = "#e9ecef")
+                      }
+                      onMouseOut={(e) =>
+                        (e.target.style.backgroundColor = "#fafafa")
+                      }
                     >
                       Date{" "}
-                      <span style={{ color: sortBy === "date" ? "#007bff" : "#6c757d" }}>
+                      <span
+                        className="sort-arrow"
+                        style={{
+                          color: sortBy === "date" ? "#007bff" : "#6c757d",
+                        }}
+                      >
                         {sortBy === "date"
                           ? sortOrder === "asc"
                             ? "↑"
@@ -560,22 +565,31 @@ export default function App() {
                           : "↕"}
                       </span>
                     </Th>
-                    <Th>Title</Th>
-                    <Th>Category</Th>
-                    <Th>Status</Th>
+                    <Th className="title-column">Title</Th>
+                    <Th className="category-column">Category</Th>
+                    <Th className="status-column">Status</Th>
                     {activeTab === "polymarket" && (
                       <Th
-                        style={{ 
+                        style={{
                           cursor: "pointer",
                           userSelect: "none",
-                          transition: "background-color 0.2s"
+                          transition: "background-color 0.2s",
                         }}
                         onClick={() => handleSort("liquidity")}
-                        onMouseOver={(e) => e.target.style.backgroundColor = "#e9ecef"}
-                        onMouseOut={(e) => e.target.style.backgroundColor = "#fafafa"}
+                        onMouseOver={(e) =>
+                          (e.target.style.backgroundColor = "#e9ecef")
+                        }
+                        onMouseOut={(e) =>
+                          (e.target.style.backgroundColor = "#fafafa")
+                        }
                       >
                         Liquidity{" "}
-                        <span style={{ color: sortBy === "liquidity" ? "#007bff" : "#6c757d" }}>
+                        <span
+                          style={{
+                            color:
+                              sortBy === "liquidity" ? "#007bff" : "#6c757d",
+                          }}
+                        >
                           {sortBy === "liquidity"
                             ? sortOrder === "asc"
                               ? "↑"
