@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 
-const API_BASE = import.meta.env.VITE_API_BASE || "https://copypools-production.up.railway.app";
+const API_BASE =
+  import.meta.env.VITE_API_BASE ||
+  "https://copypools-production.up.railway.app";
 
 export default function App() {
   const [loading, setLoading] = useState(false);
