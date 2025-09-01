@@ -343,6 +343,9 @@ label {
     font-size: 12px !important;
     text-align: center !important;
     margin-bottom: 12px !important;
+    background: #2a2a2a !important;
+    color: #ffffff !important;
+    border-radius: 4px !important;
   }
 
   /* Main content layout - stack vertically on mobile */
@@ -363,7 +366,8 @@ label {
   .table-wrapper {
     height: 60vh !important;
     overflow: auto !important;
-    border: 1px solid #ddd !important;
+    background: #1a1a1a !important;
+    border: 1px solid #444 !important;
     border-radius: 4px !important;
     -webkit-overflow-scrolling: touch !important;
   }
@@ -380,12 +384,13 @@ label {
   thead th {
     position: sticky !important;
     top: 0 !important;
-    background: #fafafa !important;
+    background: #2a2a2a !important;
+    color: #ffffff !important;
     z-index: 10 !important;
     padding: 8px 4px !important;
     font-size: 11px !important;
     font-weight: 600 !important;
-    border-bottom: 2px solid #ddd !important;
+    border-bottom: 2px solid #444 !important;
     white-space: nowrap !important;
   }
 
@@ -394,7 +399,9 @@ label {
     padding: 6px 4px !important;
     font-size: 11px !important;
     vertical-align: top !important;
-    border-bottom: 1px solid #eee !important;
+    background: #1a1a1a !important;
+    color: #ffffff !important;
+    border-bottom: 1px solid #333 !important;
     word-wrap: break-word !important;
   }
 
@@ -504,6 +511,26 @@ label {
     z-index: 1 !important;
   }
 
+  /* Login page logo - mobile responsive */
+  .wallet-connect-container {
+    max-width: 280px !important;
+    padding: 24px !important;
+  }
+
+  .wallet-connect-container img {
+    width: 48px !important;
+    height: 48px !important;
+  }
+
+  .wallet-connect-container h1 {
+    font-size: 24px !important;
+  }
+
+  .wallet-connect-container div {
+    gap: 12px !important;
+    margin-bottom: 24px !important;
+  }
+
   .export-button {
     width: 100% !important;
     padding: 12px !important;
@@ -514,9 +541,9 @@ label {
 
   .json-preview {
     flex: 1 !important;
-    border: 1px solid #ddd !important;
+    border: 1px solid #444 !important;
     border-radius: 4px !important;
-    background: #f8f9fa !important;
+    background: #1a1a1a !important;
     display: flex !important;
     flex-direction: column !important;
   }
@@ -525,8 +552,9 @@ label {
     padding: 8px !important;
     font-size: 12px !important;
     font-weight: 600 !important;
-    background: #e9ecef !important;
-    border-bottom: 1px solid #ddd !important;
+    background: #2a2a2a !important;
+    color: #ffffff !important;
+    border-bottom: 1px solid #444 !important;
     flex-shrink: 0 !important;
   }
 
@@ -552,7 +580,9 @@ label {
     width: 100% !important;
     padding: 10px !important;
     font-size: 16px !important; /* Prevent zoom on iOS */
-    border: 1px solid #ccc !important;
+    background: #1a1a1a !important;
+    color: #ffffff !important;
+    border: 1px solid #555 !important;
     border-radius: 4px !important;
     -webkit-appearance: none !important;
   }

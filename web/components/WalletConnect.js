@@ -88,6 +88,7 @@ export function WalletConnect() {
       }}
     >
       <div
+        className="wallet-connect-container"
         style={{
           backgroundColor: "#2a2a2a",
           padding: "40px",
@@ -99,6 +100,38 @@ export function WalletConnect() {
           border: "1px solid #444",
         }}
       >
+        {/* Logo and Title - Larger than header */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: "32px",
+            gap: "16px",
+          }}
+        >
+          <img
+            src="/drops_logo.png"
+            alt="DROPS"
+            style={{
+              width: "60px",
+              height: "60px",
+              objectFit: "contain",
+            }}
+          />
+          <h1
+            style={{
+              margin: 0,
+              fontSize: "32px",
+              fontWeight: "600",
+              color: "rgba(220, 236, 78, 1)",
+              fontFamily: "omedium, system-ui, -apple-system, Segoe UI, Roboto",
+            }}
+          >
+            DROPS
+          </h1>
+        </div>
+
         <button
           onClick={handleConnect}
           style={{
