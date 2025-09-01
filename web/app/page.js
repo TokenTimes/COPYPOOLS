@@ -50,6 +50,15 @@ export default function HomePage() {
   const [exportProgress, setExportProgress] = useState(0);
   const [showToast, setShowToast] = useState(false);
 
+  // Outcome allocations for each market - stores percentages for each outcome
+  const [outcomeAllocations, setOutcomeAllocations] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("outcome-allocations");
+      return saved ? JSON.parse(saved) : {};
+    }
+    return {};
+  });
+
   // Separate memory for each tab's selections
   const [polymarketSelections, setPolymarketSelections] = useState(() => {
     if (typeof window !== "undefined") {
@@ -66,13 +75,6 @@ export default function HomePage() {
     return new Set();
   });
 
-  const [rainMemory, setRainMemory] = useState(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("polymarket-rain-memory");
-      return saved ? new Set(JSON.parse(saved)) : new Set();
-    }
-    return new Set();
-  });
   const [countdown, setCountdown] = useState(3600); // 60 minutes = 3600 seconds
   const [activeTab, setActiveTab] = useState("polymarket");
   const [sport, setSport] = useState("soccer_epl");
@@ -191,6 +193,55 @@ export default function HomePage() {
     }
   }, [bet365Selections]);
 
+  // Save outcome allocations to localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(
+        "outcome-allocations",
+        JSON.stringify(outcomeAllocations)
+      );
+    }
+  }, [outcomeAllocations]);
+
+  // Auto-distribute allocations when investment amount changes
+  useEffect(() => {
+    if (
+      investmentAmount &&
+      investmentAmount !== "0" &&
+      investmentAmount !== ""
+    ) {
+      // Get all selected markets from both tabs
+      const allSelectedMarkets = [
+        ...Array.from(polymarketSelections).map((id) => ({
+          id,
+          data: allPolymarketData,
+        })),
+        ...Array.from(bet365Selections).map((id) => ({
+          id,
+          data: allBet365Data,
+        })),
+      ];
+
+      // Auto-distribute for markets that have no allocations or incomplete allocations
+      allSelectedMarkets.forEach(({ id, data }) => {
+        const market = data.find((m) => m.market_id === id);
+        if (market && market.outcomes) {
+          const currentTotal = getTotalAllocation(id);
+          // Auto-distribute if no allocations exist or total is not 100%
+          if (currentTotal === 0) {
+            autoDistributeAllocations(id, market.outcomes);
+          }
+        }
+      });
+    }
+  }, [
+    investmentAmount,
+    polymarketSelections,
+    bet365Selections,
+    allPolymarketData,
+    allBet365Data,
+  ]);
+
   // Sorting function
   const handleSort = (column) => {
     console.log("Sorting by:", column, "Current:", sortBy, sortOrder);
@@ -220,24 +271,164 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, [activeTab, onlyOpen, sport, regions]);
 
-  // Save rain memory to localStorage
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem(
-        "polymarket-rain-memory",
-        JSON.stringify([...rainMemory])
-      );
-    }
-  }, [rainMemory]);
+  // Outcome allocation functions
+  const updateOutcomeAllocation = (marketId, outcomeIndex, percentage) => {
+    setOutcomeAllocations((prev) => ({
+      ...prev,
+      [marketId]: {
+        ...prev[marketId],
+        [outcomeIndex]: percentage,
+      },
+    }));
+  };
 
-  const toggleRainMemory = (marketId, checked) => {
-    const newRainMemory = new Set(rainMemory);
-    if (checked) {
-      newRainMemory.add(marketId);
-    } else {
-      newRainMemory.delete(marketId);
+  // Smart auto-balancing allocation update
+  const updateOutcomeAllocationWithBalance = (
+    marketId,
+    outcomeIndex,
+    newPercentage,
+    totalOutcomes
+  ) => {
+    const currentAllocations = outcomeAllocations[marketId] || {};
+    const newAllocations = { ...currentAllocations };
+
+    // Set the new percentage for the changed outcome
+    newAllocations[outcomeIndex] = Math.max(0, Math.min(100, newPercentage));
+
+    // Calculate remaining percentage to distribute
+    const remainingPercentage = 100 - newAllocations[outcomeIndex];
+
+    // Get all other outcome indices
+    const otherIndices = Array.from(
+      { length: totalOutcomes },
+      (_, i) => i
+    ).filter((i) => i !== outcomeIndex);
+
+    if (otherIndices.length > 0 && remainingPercentage >= 0) {
+      // Calculate current total of other outcomes
+      const otherTotal = otherIndices.reduce(
+        (sum, i) => sum + (currentAllocations[i] || 0),
+        0
+      );
+
+      if (otherTotal > 0) {
+        // Proportionally redistribute the remaining percentage
+        otherIndices.forEach((i) => {
+          const currentValue = currentAllocations[i] || 0;
+          const proportion = currentValue / otherTotal;
+          newAllocations[i] = Math.max(0, remainingPercentage * proportion);
+        });
+      } else {
+        // If other outcomes were 0, distribute equally
+        const equalShare = remainingPercentage / otherIndices.length;
+        otherIndices.forEach((i) => {
+          newAllocations[i] = equalShare;
+        });
+      }
     }
-    setRainMemory(newRainMemory);
+
+    // Ensure total is exactly 100% (handle floating point precision)
+    const actualTotal = Object.values(newAllocations).reduce(
+      (sum, val) => sum + val,
+      0
+    );
+    if (actualTotal !== 100 && actualTotal > 0) {
+      const adjustment = 100 / actualTotal;
+      Object.keys(newAllocations).forEach((key) => {
+        newAllocations[key] *= adjustment;
+      });
+    }
+
+    setOutcomeAllocations((prev) => ({
+      ...prev,
+      [marketId]: newAllocations,
+    }));
+  };
+
+  // Reset allocations to match market odds
+  const resetAllocationsToOdds = (marketId, outcomes) => {
+    if (!outcomes || outcomes.length === 0) return;
+
+    // Check if all outcomes have valid odds
+    const hasValidOdds = outcomes.every(
+      (outcome) => outcome.implied_prob != null && outcome.implied_prob > 0
+    );
+
+    if (!hasValidOdds) return;
+
+    // Calculate total probability (should be close to 1, but normalize just in case)
+    const totalProb = outcomes.reduce(
+      (sum, outcome) => sum + (outcome.implied_prob || 0),
+      0
+    );
+
+    if (totalProb <= 0) return;
+
+    // Set allocations based on normalized odds
+    const newAllocations = {};
+    outcomes.forEach((outcome, index) => {
+      const normalizedProb = (outcome.implied_prob || 0) / totalProb;
+      newAllocations[index] = normalizedProb * 100;
+    });
+
+    setOutcomeAllocations((prev) => ({
+      ...prev,
+      [marketId]: newAllocations,
+    }));
+  };
+
+  // Check if outcomes have valid odds for display
+  const hasValidOddsForDisplay = (outcomes) => {
+    return (
+      outcomes &&
+      outcomes.length > 0 &&
+      outcomes.some(
+        (outcome) => outcome.implied_prob != null && outcome.implied_prob > 0
+      )
+    );
+  };
+
+  const getOutcomeAllocation = (marketId, outcomeIndex) => {
+    return outcomeAllocations[marketId]?.[outcomeIndex] || 0;
+  };
+
+  const getTotalAllocation = (marketId) => {
+    const allocations = outcomeAllocations[marketId] || {};
+    return Object.values(allocations).reduce((sum, val) => sum + (val || 0), 0);
+  };
+
+  const normalizeAllocations = (marketId, outcomes) => {
+    const total = getTotalAllocation(marketId);
+    if (total === 0) {
+      // Equal distribution if no allocations set
+      const equalShare = 100 / outcomes.length;
+      const newAllocations = {};
+      outcomes.forEach((_, index) => {
+        newAllocations[index] = equalShare;
+      });
+      setOutcomeAllocations((prev) => ({
+        ...prev,
+        [marketId]: newAllocations,
+      }));
+      return equalShare;
+    }
+    return total;
+  };
+
+  // Auto-distribute allocations equally for a market
+  const autoDistributeAllocations = (marketId, outcomes) => {
+    if (!outcomes || outcomes.length === 0) return;
+
+    const equalShare = 100 / outcomes.length;
+    const newAllocations = {};
+    outcomes.forEach((_, index) => {
+      newAllocations[index] = equalShare;
+    });
+
+    setOutcomeAllocations((prev) => ({
+      ...prev,
+      [marketId]: newAllocations,
+    }));
   };
 
   // Investment validation
@@ -355,12 +546,30 @@ export default function HomePage() {
     );
     allSelectedData.push(...bet365Selected);
 
-    const questions = allSelectedData.map((market) => ({
-      question: market.title,
-      options: market.outcomes?.map((outcome) => outcome.name) || [],
-      invested:
-        totalQuestions > 0 && investmentValue > 0 ? investmentPerQuestion : 0,
-    }));
+    const questions = allSelectedData.map((market) => {
+      const baseInvestment =
+        totalQuestions > 0 && investmentValue > 0 ? investmentPerQuestion : 0;
+      const allocations = outcomeAllocations[market.market_id] || {};
+
+      // Create allocation breakdown for each outcome
+      const outcomeAllocationBreakdown =
+        market.outcomes?.map((outcome, index) => ({
+          outcome: outcome.name,
+          percentage: allocations[index] || 0,
+          amount: baseInvestment * ((allocations[index] || 0) / 100),
+        })) || [];
+
+      return {
+        question: market.title,
+        options: market.outcomes?.map((outcome) => outcome.name) || [],
+        invested: baseInvestment,
+        outcome_allocations: outcomeAllocationBreakdown,
+        total_allocation_percentage: Object.values(allocations).reduce(
+          (sum, val) => sum + (val || 0),
+          0
+        ),
+      };
+    });
 
     // Calculate USDT balance with better error handling
     let usdtBalanceValue = 0;
@@ -390,6 +599,7 @@ export default function HomePage() {
     investmentValue,
     totalQuestions,
     investmentPerQuestion,
+    outcomeAllocations,
   ]);
 
   // Selection handlers
@@ -422,6 +632,29 @@ export default function HomePage() {
       setPolymarketSelections(newSelected);
     } else {
       setBet365Selections(newSelected);
+    }
+
+    // Auto-distribute allocations equally when a market is selected
+    if (checked) {
+      // Find the market data to get outcomes
+      const currentData =
+        activeTab === "polymarket" ? allPolymarketData : allBet365Data;
+      const market = currentData.find((m) => m.market_id === marketId);
+
+      if (market && market.outcomes) {
+        // Only auto-distribute if there are no existing allocations or if investment amount is set
+        const currentTotal = getTotalAllocation(marketId);
+        if (currentTotal === 0 || investmentAmount) {
+          autoDistributeAllocations(marketId, market.outcomes);
+        }
+      }
+    } else {
+      // Reset allocations when unselecting a market
+      setOutcomeAllocations((prev) => {
+        const newAllocations = { ...prev };
+        delete newAllocations[marketId];
+        return newAllocations;
+      });
     }
   };
 
@@ -858,7 +1091,6 @@ export default function HomePage() {
                         </span>
                       </Th>
                       <Th className="title-column">Title</Th>
-                      <Th className="status-column">Status</Th>
                       {activeTab === "polymarket" && (
                         <Th
                           className="liquidity-column clickable"
@@ -891,9 +1123,11 @@ export default function HomePage() {
                           </span>
                         </Th>
                       )}
-                      <Th className="outcomes-column">Top outcomes</Th>
-                      <Th className="rain-column" style={{ width: 80 }}>
-                        Rain
+                      <Th
+                        className="outcomes-column"
+                        style={{ minWidth: "300px" }}
+                      >
+                        Outcome Allocation
                       </Th>
                     </tr>
                   </thead>
@@ -918,48 +1152,229 @@ export default function HomePage() {
                         </Td>
                         <Td>{fmtDate(m.end_date || m.commence_time)}</Td>
                         <Td>{m.title}</Td>
-                        <Td>{m.status}</Td>
                         {activeTab === "polymarket" && (
                           <Td>{fmtNumber(m.liquidity) || "—"}</Td>
                         )}
-                        <Td>
-                          {(m.outcomes || []).slice(0, 3).map((o, i) => (
-                            <span
-                              key={i}
-                              style={{
-                                display: "inline-block",
-                                marginRight: 8,
-                              }}
-                            >
-                              {o.name}:{" "}
-                              {o.implied_prob != null
-                                ? (o.implied_prob * 100).toFixed(1) + "%"
-                                : "—"}
-                            </span>
-                          ))}
-                        </Td>
-                        <Td>
-                          <input
-                            type="checkbox"
-                            checked={rainMemory.has(m.market_id)}
-                            onChange={(e) =>
-                              toggleRainMemory(m.market_id, e.target.checked)
-                            }
-                            style={{
-                              accentColor: "#28a745",
-                            }}
-                          />
-                          {rainMemory.has(m.market_id) && (
-                            <span
-                              style={{
-                                color: "#28a745",
-                                fontSize: 12,
-                                marginLeft: 4,
-                              }}
-                            >
-                              ✓
-                            </span>
-                          )}
+                        <Td style={{ padding: "8px" }}>
+                          <div style={{ minWidth: "280px" }}>
+                            {selectedMarkets.has(m.market_id) ? (
+                              <>
+                                {(m.outcomes || []).map((outcome, index) => {
+                                  const currentAllocation =
+                                    getOutcomeAllocation(m.market_id, index);
+                                  const totalOutcomes = m.outcomes.length;
+
+                                  return (
+                                    <div
+                                      key={index}
+                                      style={{
+                                        marginBottom: "8px",
+                                        padding: "6px",
+                                        border: "1px solid #555",
+                                        borderRadius: "4px",
+                                        backgroundColor: "#2a2a2a",
+                                      }}
+                                    >
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                          alignItems: "center",
+                                          justifyContent: "space-between",
+                                          marginBottom: "4px",
+                                        }}
+                                      >
+                                        <div
+                                          style={{
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            maxWidth: "120px",
+                                          }}
+                                        >
+                                          <span
+                                            style={{
+                                              fontSize: "12px",
+                                              fontWeight: "500",
+                                              color: "#ffffff",
+                                              overflow: "hidden",
+                                              textOverflow: "ellipsis",
+                                              whiteSpace: "nowrap",
+                                            }}
+                                            title={outcome.name}
+                                          >
+                                            {outcome.name}
+                                          </span>
+                                          {outcome.implied_prob != null &&
+                                            outcome.implied_prob > 0 && (
+                                              <span
+                                                style={{
+                                                  fontSize: "10px",
+                                                  color: "#888888",
+                                                  fontStyle: "italic",
+                                                }}
+                                              >
+                                                Odds:{" "}
+                                                {(
+                                                  outcome.implied_prob * 100
+                                                ).toFixed(1)}
+                                                %
+                                              </span>
+                                            )}
+                                        </div>
+                                        <span
+                                          style={{
+                                            fontSize: "11px",
+                                            color: "#cccccc",
+                                            minWidth: "50px",
+                                            textAlign: "right",
+                                            fontWeight: "bold",
+                                          }}
+                                        >
+                                          {currentAllocation.toFixed(1)}%
+                                        </span>
+                                      </div>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                          alignItems: "center",
+                                          gap: "6px",
+                                        }}
+                                      >
+                                        <input
+                                          type="range"
+                                          min="0"
+                                          max="100"
+                                          step="0.1"
+                                          value={currentAllocation}
+                                          onChange={(e) => {
+                                            const newValue = parseFloat(
+                                              e.target.value
+                                            );
+                                            updateOutcomeAllocationWithBalance(
+                                              m.market_id,
+                                              index,
+                                              newValue,
+                                              totalOutcomes
+                                            );
+                                          }}
+                                          style={{
+                                            flex: 1,
+                                            height: "4px",
+                                            borderRadius: "2px",
+                                            background: `linear-gradient(to right, rgba(220, 236, 78, 0.9) 0%, rgba(220, 236, 78, 0.9) ${currentAllocation}%, #333 ${currentAllocation}%, #333 100%)`,
+                                            outline: "none",
+                                            cursor: "pointer",
+                                            WebkitAppearance: "none",
+                                            appearance: "none",
+                                          }}
+                                        />
+                                        <input
+                                          type="number"
+                                          min="0"
+                                          max="100"
+                                          step="0.1"
+                                          value={currentAllocation.toFixed(1)}
+                                          onChange={(e) => {
+                                            const newValue = Math.max(
+                                              0,
+                                              Math.min(
+                                                100,
+                                                parseFloat(e.target.value) || 0
+                                              )
+                                            );
+                                            updateOutcomeAllocationWithBalance(
+                                              m.market_id,
+                                              index,
+                                              newValue,
+                                              totalOutcomes
+                                            );
+                                          }}
+                                          style={{
+                                            width: "55px",
+                                            padding: "3px 6px",
+                                            fontSize: "11px",
+                                            border: "1px solid #555",
+                                            borderRadius: "4px",
+                                            textAlign: "center",
+                                            backgroundColor: "#1a1a1a",
+                                            color: "#ffffff",
+                                            fontWeight: "bold",
+                                          }}
+                                        />
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                                {hasValidOddsForDisplay(m.outcomes) && (
+                                  <div
+                                    style={{
+                                      marginTop: "8px",
+                                      textAlign: "center",
+                                    }}
+                                  >
+                                    <button
+                                      onClick={() =>
+                                        resetAllocationsToOdds(
+                                          m.market_id,
+                                          m.outcomes
+                                        )
+                                      }
+                                      style={{
+                                        padding: "4px 12px",
+                                        fontSize: "10px",
+                                        fontWeight: "500",
+                                        backgroundColor:
+                                          "rgba(220, 236, 78, 0.1)",
+                                        color: "rgba(220, 236, 78, 1)",
+                                        border:
+                                          "1px solid rgba(220, 236, 78, 0.3)",
+                                        borderRadius: "4px",
+                                        cursor: "pointer",
+                                        transition: "all 0.2s ease",
+                                      }}
+                                      onMouseOver={(e) => {
+                                        e.target.style.backgroundColor =
+                                          "rgba(220, 236, 78, 0.2)";
+                                        e.target.style.borderColor =
+                                          "rgba(220, 236, 78, 0.5)";
+                                      }}
+                                      onMouseOut={(e) => {
+                                        e.target.style.backgroundColor =
+                                          "rgba(220, 236, 78, 0.1)";
+                                        e.target.style.borderColor =
+                                          "rgba(220, 236, 78, 0.3)";
+                                      }}
+                                    >
+                                      Reset to Odds
+                                    </button>
+                                  </div>
+                                )}
+                              </>
+                            ) : (
+                              // Show outcome names with odds for unselected questions
+                              <div>
+                                {(m.outcomes || [])
+                                  .slice(0, 3)
+                                  .map((outcome, index) => (
+                                    <span
+                                      key={index}
+                                      style={{
+                                        display: "inline-block",
+                                        marginRight: 8,
+                                        fontSize: "12px",
+                                        color: "#ffffff",
+                                      }}
+                                    >
+                                      {outcome.name}:{" "}
+                                      {outcome.implied_prob != null
+                                        ? (outcome.implied_prob * 100).toFixed(
+                                            1
+                                          ) + "%"
+                                        : "—"}
+                                    </span>
+                                  ))}
+                              </div>
+                            )}
+                          </div>
                         </Td>
                       </tr>
                     ))}
