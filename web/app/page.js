@@ -503,7 +503,7 @@ export default function HomePage() {
         }}
       >
         {/* Tab Interface */}
-        <div style={{ marginBottom: 20 }}>
+        <div style={{ marginBottom: 20, marginTop: 40 }}>
           <div style={{ display: "flex" }}>
             <button
               className={`tab-button ${
@@ -900,7 +900,6 @@ export default function HomePage() {
                 height: "100%",
               }}
             >
-                
               <div
                 className="json-preview"
                 style={{
@@ -912,7 +911,6 @@ export default function HomePage() {
                   flexDirection: "column",
                 }}
               >
-                
                 <div
                   className="json-header"
                   style={{

@@ -457,9 +457,9 @@ label {
     padding-top: 40px !important;
   }
 
-  /* Ensure tabs are not hidden */
+  /* Ensure tabs are not hidden and have proper spacing */
   .tab-container {
-    margin-top: 10px !important;
+    margin-top: 50px !important;
     position: relative !important;
     z-index: 1 !important;
   }
