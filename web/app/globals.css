@@ -26,7 +26,7 @@
   margin: 0;
   font-size: 24px;
   font-weight: 600;
-  color: #ffffff;
+  color: rgba(220, 236, 78, 1);
   font-family: "omedium", system-ui, -apple-system, "Segoe UI", Roboto;
 }
 
@@ -494,11 +494,12 @@ label {
   .app-header h1 {
     font-size: 18px !important;
     margin: 0 !important;
+    color: rgba(220, 236, 78, 1) !important;
   }
 
   /* Ensure tabs are not hidden and have proper spacing */
   .tab-container {
-    margin-top: 15px !important;
+    margin-top: 60px !important;
     position: relative !important;
     z-index: 1 !important;
   }

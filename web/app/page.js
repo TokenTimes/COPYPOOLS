@@ -537,7 +537,10 @@ export default function HomePage() {
         </div>
 
         {/* Tab Interface */}
-        <div style={{ marginBottom: 20, marginTop: 40 }}>
+        <div 
+          className="tab-container"
+          style={{ marginBottom: 20, marginTop: 40 }}
+        >
           <div style={{ display: "flex" }}>
             <button
               className={`tab-button ${
@@ -579,7 +582,6 @@ export default function HomePage() {
             </button>
           </div>
         </div>
-
         <div
           className="controls-section"
           style={{
@@ -661,7 +663,6 @@ export default function HomePage() {
             </>
           )}
         </div>
-
         {/* Investment controls */}
         <div
           className="investment-box"
@@ -718,14 +719,12 @@ export default function HomePage() {
             </span>
           )}
         </div>
-
         {loading && <p className="loading">Loading…</p>}
         {error && (
           <p className="error" style={{ color: "crimson" }}>
             {error}
           </p>
         )}
-
         {!loading && !error && (
           <div
             className="main-content"
@@ -983,7 +982,6 @@ export default function HomePage() {
             </div>
           </div>
         )}
-
         {/* Export to Rain Button - Centered below table and JSON preview */}
         {!loading && !error && (
           <div
