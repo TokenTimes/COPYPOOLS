@@ -1,0 +1,16 @@
+1:"$Sreact.fragment"
+2:I[55665,["1499","static/chunks/1499-1f9cd270249b2d59.js","7177","static/chunks/app/layout-0ecefc8af1859615.js"],"Providers"]
+3:I[9766,[],""]
+4:I[98924,[],""]
+5:I[24431,[],"OutletBoundary"]
+7:I[15278,[],"AsyncMetadataOutlet"]
+9:I[24431,[],"ViewportBoundary"]
+b:I[24431,[],"MetadataBoundary"]
+c:"$Sreact.suspense"
+e:I[57150,[],""]
+:HL["/_next/static/css/f4a21a9ff038fe6d.css","style"]
+0:{"P":null,"b":"WoNc5ZRrRGYp2sqzVk3ai","p":"","c":["","_not-found"],"i":false,"f":[[["",{"children":["/_not-found",{"children":["__PAGE__",{}]}]},"$undefined","$undefined",true],["",["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/css/f4a21a9ff038fe6d.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]],["$","html",null,{"lang":"en","children":["$","body",null,{"children":["$","$L2",null,{"children":["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[["$","div",null,{"style":{"display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center","minHeight":"100vh","backgroundColor":"#1a1a1a","color":"#ffffff","fontFamily":"omedium, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif"},"children":[["$","h1",null,{"children":"404 - Page Not Found"}],["$","p",null,{"children":"The page you are looking for does not exist."}]]}],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]}]}]}]]}],{"children":["/_not-found",["$","$1","c",{"children":[null,["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":["__PAGE__",["$","$1","c",{"children":[["$","div",null,{"style":{"display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center","minHeight":"100vh","backgroundColor":"#1a1a1a","color":"#ffffff","fontFamily":"omedium, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif"},"children":[["$","h1",null,{"children":"404 - Page Not Found"}],["$","p",null,{"children":"The page you are looking for does not exist."}]]}],null,["$","$L5",null,{"children":["$L6",["$","$L7",null,{"promise":"$@8"}]]}]]}],{},null,false]},null,false]},null,false],["$","$1","h",{"children":[["$","meta",null,{"name":"robots","content":"noindex"}],[["$","$L9",null,{"children":"$La"}],null],["$","$Lb",null,{"children":["$","div",null,{"hidden":true,"children":["$","$c",null,{"fallback":null,"children":"$Ld"}]}]}]]}],false]],"m":"$undefined","G":["$e",[]],"s":false,"S":true}
+a:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+6:null
+8:{"metadata":[["$","title","0",{"children":"Polymarket Scanner"}],["$","meta","1",{"name":"description","content":"Scan and compare markets from Polymarket and Bet365"}]],"error":null,"digest":"$undefined"}
+d:"$8:metadata"

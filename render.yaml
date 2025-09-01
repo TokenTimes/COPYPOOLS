@@ -11,12 +11,12 @@ services:
       - key: NODE_ENV
         value: production
 
-  # Frontend Static Site
+  # Frontend Next.js App
   - type: web
     name: polymarket-client
-    env: static
+    env: node
     buildCommand: cd web && npm ci && npm run build
-    staticPublishPath: web/dist
+    startCommand: cd web && npm start
     envVars:
-      - key: VITE_API_BASE
+      - key: NEXT_PUBLIC_API_BASE
         value: https://polymarket-server.onrender.com

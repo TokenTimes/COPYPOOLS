@@ -1,14 +1,14 @@
 #!/bin/bash
 
-echo "🚀 Building Polymarket Scanner Client for Render..."
+echo "🚀 Building Polymarket Scanner Next.js Client for Render..."
 
 # Install dependencies
 echo "📦 Installing dependencies..."
 npm ci
 
 # Build for production
-echo "🔨 Building for production..."
+echo "🔨 Building Next.js for production..."
 npm run build
 
-echo "✅ Build completed! Output in dist/ directory"
-ls -la dist/
+echo "✅ Next.js build completed! Output in .next/ directory"
+ls -la .next/

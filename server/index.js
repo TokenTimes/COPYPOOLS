@@ -112,12 +112,14 @@ const ODDS_API_KEY = process.env.ODDS_API_KEY;
 const ODDS_BASE = "https://api.the-odds-api.com/v4";
 
 function normalizeBet365Event(ev) {
-  // Accept ANY bookmaker, not just bet365 specifically
-  const bookmaker = (ev.bookmakers || [])[0]; // Take first available bookmaker
+  // Find bet365 bookmaker in the payload
+  const bookmaker = (ev.bookmakers || []).find((b) =>
+    /bet365/i.test(b.key || b.title || "")
+  );
   if (!bookmaker) return null;
   const markets = bookmaker.markets || [];
-  // Take ANY available market, not just h2h
-  const mkt = markets[0];
+  // Take the primary H2H market if present; otherwise first market
+  const mkt = markets.find((m) => m.key === "h2h") || markets[0];
   if (!mkt) return null;
 
   const outcomes = (mkt.outcomes || []).map((o) => {
@@ -132,7 +134,7 @@ function normalizeBet365Event(ev) {
   });
 
   return {
-    source: bookmaker.key || bookmaker.title || "sportsbook",
+    source: "bet365",
     market_id: String(ev.id || `${ev.sport_key}:${ev.commence_time}`),
     title:
       ev.home_team && ev.away_team
@@ -556,9 +558,9 @@ app.get("/api/bet365", async (req, res) => {
       return res.json({ count: mockData.length, markets: mockData });
     }
 
-    const sport = req.query.sport || "americanfootball_nfl"; // Default to a popular sport
-    const regions = req.query.regions || "us,uk,eu,au"; // Include more regions
-    const markets = req.query.markets || "h2h,spreads,totals"; // Include multiple market types
+    const sport = req.query.sport || "soccer_epl";
+    const regions = req.query.regions || "uk,eu";
+    const markets = req.query.markets || "h2h";
     const oddsFormat = req.query.oddsFormat || "decimal";
 
     const url = new URL(`${ODDS_BASE}/sports/${sport}/odds`);
@@ -579,10 +581,6 @@ app.get("/api/bet365", async (req, res) => {
       const norm = normalizeBet365Event(ev);
       if (norm) results.push(norm);
     }
-
-    console.log(
-      `Bet365 API: Fetched ${json.length} events, normalized ${results.length} results`
-    );
 
     const limit = Math.min(Number(req.query.limit || 200), 1000);
     results.sort((a, b) =>
