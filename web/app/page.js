@@ -72,7 +72,7 @@ export default function HomePage() {
   });
   const [countdown, setCountdown] = useState(3600); // 60 minutes = 3600 seconds
   const [activeTab, setActiveTab] = useState("polymarket");
-  const [sport, setSport] = useState("upcoming");
+  const [sport, setSport] = useState("soccer_epl");
   const [sortBy, setSortBy] = useState("date");
   const [sortOrder, setSortOrder] = useState("desc");
   const [regions, setRegions] = useState("us,uk,eu,au");
@@ -639,7 +639,6 @@ export default function HomePage() {
                 onChange={(e) => setSport(e.target.value)}
                 style={{ padding: 8, width: 180 }}
               >
-                <option value="upcoming">All Sports</option>
                 <option value="soccer_epl">Premier League</option>
                 <option value="soccer_uefa_champs_league">
                   Champions League

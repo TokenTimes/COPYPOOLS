@@ -594,7 +594,7 @@ app.get("/api/bet365", async (req, res) => {
       return res.json({ count: mockData.length, markets: mockData });
     }
 
-    const sport = req.query.sport || "upcoming";
+    const sport = req.query.sport || "soccer_epl";
     const regions = req.query.regions || "us,uk,eu,au";
     const markets = req.query.markets || "h2h";
     const oddsFormat = req.query.oddsFormat || "decimal";
