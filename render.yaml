@@ -15,8 +15,12 @@ services:
   - type: web
     name: polymarket-client
     env: node
+    region: oregon
+    plan: free
     buildCommand: cd web && npm ci && npm run build
     startCommand: cd web && npm start
     envVars:
       - key: NEXT_PUBLIC_API_BASE
         value: https://polymarket-server.onrender.com
+      - key: NODE_ENV
+        value: production
