@@ -509,8 +509,6 @@ export default function HomePage() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: 20,
-            gap: 12,
           }}
         >
           <img
@@ -537,10 +535,7 @@ export default function HomePage() {
         </div>
 
         {/* Tab Interface */}
-        <div 
-          className="tab-container"
-          style={{ marginBottom: 20, marginTop: 40 }}
-        >
+        <div style={{ marginBottom: 20, marginTop: 25 }}>
           <div style={{ display: "flex" }}>
             <button
               className={`tab-button ${
@@ -927,7 +922,7 @@ export default function HomePage() {
             <div
               className="json-preview-container json-container"
               style={{
-                flex: "0 0 30%",
+                flex: "0 0 28.5%",
                 display: "flex",
                 flexDirection: "column",
                 height: "100%",
