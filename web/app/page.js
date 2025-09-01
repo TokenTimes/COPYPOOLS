@@ -502,6 +502,40 @@ export default function HomePage() {
           margin: "0 auto",
         }}
       >
+        {/* App Header with Logo */}
+        <div
+          className="app-header"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: 20,
+            gap: 12,
+          }}
+        >
+          <img
+            src="/drops_logo.png"
+            alt="DROPS"
+            className="app-logo"
+            style={{
+              width: 40,
+              height: 40,
+              objectFit: "contain",
+            }}
+          />
+          <h1
+            style={{
+              margin: 0,
+              fontSize: 24,
+              fontWeight: 600,
+              color: "rgba(220, 236, 78, 1)",
+              fontFamily: "omedium, system-ui, -apple-system, Segoe UI, Roboto",
+            }}
+          >
+            DROPS
+          </h1>
+        </div>
+
         {/* Tab Interface */}
         <div style={{ marginBottom: 20, marginTop: 40 }}>
           <div style={{ display: "flex" }}>

@@ -7,6 +7,29 @@
     "Helvetica Neue", Arial, sans-serif !important;
 }
 
+/* App header with logo - desktop styles */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  gap: 12px;
+}
+
+.app-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #ffffff;
+  font-family: "omedium", system-ui, -apple-system, "Segoe UI", Roboto;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -457,9 +480,25 @@ label {
     padding-top: 40px !important;
   }
 
+  /* App header with logo - mobile styles */
+  .app-header {
+    margin-bottom: 15px !important;
+    gap: 8px !important;
+  }
+
+  .app-logo {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .app-header h1 {
+    font-size: 18px !important;
+    margin: 0 !important;
+  }
+
   /* Ensure tabs are not hidden and have proper spacing */
   .tab-container {
-    margin-top: 50px !important;
+    margin-top: 15px !important;
     position: relative !important;
     z-index: 1 !important;
   }
