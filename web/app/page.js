@@ -526,7 +526,7 @@ export default function HomePage() {
               margin: 0,
               fontSize: 24,
               fontWeight: 600,
-              color: "rgba(220, 236, 78, 1)",
+              color: "rgba(222, 255, 78, 59)",
               fontFamily: "omedium, system-ui, -apple-system, Segoe UI, Roboto",
             }}
           >
@@ -548,7 +548,7 @@ export default function HomePage() {
                 border: "none",
                 backgroundColor:
                   activeTab === "polymarket"
-                    ? "rgba(220, 236, 78, 1)"
+                    ? "rgba(222, 255, 78, 59)"
                     : "#f8f9fa",
                 color: activeTab === "polymarket" ? "black" : "#495057",
                 cursor: "pointer",
@@ -566,7 +566,7 @@ export default function HomePage() {
                 padding: "12px 24px",
                 border: "none",
                 backgroundColor:
-                  activeTab === "bet365" ? "rgba(220, 236, 78, 1)" : "#f8f9fa",
+                  activeTab === "bet365" ? "rgba(222, 255, 78, 59)" : "#f8f9fa",
                 color: activeTab === "bet365" ? "black" : "#495057",
                 cursor: "pointer",
                 fontWeight: 600,
@@ -724,7 +724,7 @@ export default function HomePage() {
         {!loading && !error && (
           <div
             className="main-content"
-            style={{ display: "flex", gap: 16, height: "65vh" }}
+            style={{ display: "flex", gap: 16, height: "60vh" }}
           >
             {/* Main table - 70% width */}
             <div
@@ -998,7 +998,7 @@ export default function HomePage() {
                 fontWeight: "600",
                 backgroundColor:
                   polymarketSelections.size + bet365Selections.size > 0
-                    ? "rgba(220, 236, 78, 1)"
+                    ? "rgba(222, 255, 78, 59)"
                     : "#ccc",
                 color:
                   polymarketSelections.size + bet365Selections.size > 0

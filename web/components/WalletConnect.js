@@ -60,7 +60,7 @@ export function WalletConnect() {
               cursor: "pointer",
             }}
             onMouseOver={(e) => {
-              e.target.style.backgroundColor = "rgba(220, 236, 78, 1)";
+              e.target.style.backgroundColor = "rgba(222, 255, 78, 59)";
               e.target.style.color = "black";
             }}
             onMouseOut={(e) => {
@@ -124,7 +124,7 @@ export function WalletConnect() {
               margin: 0,
               fontSize: "32px",
               fontWeight: "600",
-              color: "rgba(220, 236, 78, 1)",
+              color: "rgba(222, 255, 78, 59)",
               fontFamily: "omedium, system-ui, -apple-system, Segoe UI, Roboto",
             }}
           >
@@ -139,7 +139,7 @@ export function WalletConnect() {
             padding: "16px 24px",
             fontSize: "18px",
             fontWeight: "600",
-            backgroundColor: "rgba(220, 236, 78, 0.82)",
+            backgroundColor: "rgba(222, 255, 78, 59)",
             color: "black",
             border: "none",
             borderRadius: "8px",
@@ -147,11 +147,11 @@ export function WalletConnect() {
             transition: "background-color 0.2s",
           }}
           onMouseOver={(e) => {
-            e.target.style.backgroundColor = "rgba(220, 236, 78, 1)";
+            e.target.style.backgroundColor = "rgba(222, 255, 78, 59)";
             e.target.style.color = "black";
           }}
           onMouseOut={(e) => {
-            e.target.style.backgroundColor = "rgba(220, 236, 78, 0.82)";
+            e.target.style.backgroundColor = "rgba(222, 255, 78, 59)";
             e.target.style.color = "white";
           }}
         >
