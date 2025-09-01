@@ -46,6 +46,9 @@ export default function HomePage() {
   const [selectedMarkets, setSelectedMarkets] = useState(new Set());
   const [displayLimit, setDisplayLimit] = useState(50);
   const [investmentAmount, setInvestmentAmount] = useState("");
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportProgress, setExportProgress] = useState(0);
+  const [showToast, setShowToast] = useState(false);
 
   // Separate memory for each tab's selections
   const [polymarketSelections, setPolymarketSelections] = useState(() => {
@@ -248,8 +251,8 @@ export default function HomePage() {
     if (!investmentAmount) return "";
     if (investmentValue > availableBalance)
       return "Investment amount exceeds available balance";
-    if (totalQuestions > 0 && investmentPerQuestion < 10)
-      return "Investment per question must be at least $10";
+    if (totalQuestions > 0 && investmentPerQuestion < 1)
+      return "Investment per question must be at least $1";
     return "";
   }, [
     investmentAmount,
@@ -257,6 +260,20 @@ export default function HomePage() {
     availableBalance,
     totalQuestions,
     investmentPerQuestion,
+  ]);
+
+  const isExportDisabled = useMemo(() => {
+    const hasSelections = polymarketSelections.size + bet365Selections.size > 0;
+    const hasValidInvestment =
+      investmentAmount && investmentAmount !== "0" && investmentAmount !== "";
+    const hasNoErrors = !investmentError;
+    return !hasSelections || !hasValidInvestment || !hasNoErrors || isExporting;
+  }, [
+    polymarketSelections.size,
+    bet365Selections.size,
+    investmentAmount,
+    investmentError,
+    isExporting,
   ]);
 
   const filtered = useMemo(() => {
@@ -427,12 +444,45 @@ export default function HomePage() {
   };
 
   // Export to Rain
-  const exportToRain = () => {
+  const exportToRain = async () => {
+    // Validation checks
     if (polymarketSelections.size + bet365Selections.size === 0) return;
+    if (
+      !investmentAmount ||
+      investmentAmount === "0" ||
+      investmentAmount === ""
+    )
+      return;
+    if (investmentError) return;
 
-    // Log to console for now (could be extended to actual Rain integration)
-    console.log("Exported to Rain:", jsonPreviewData);
-    alert(`Exported ${jsonPreviewData.length} markets to Rain!`);
+    const totalQuestions = polymarketSelections.size + bet365Selections.size;
+
+    setIsExporting(true);
+    setExportProgress(0);
+
+    try {
+      // Mock processing - 1 second per selected question with progress
+      for (let i = 0; i < totalQuestions; i++) {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        setExportProgress(((i + 1) / totalQuestions) * 100);
+      }
+
+      // Log to console for now (could be extended to actual Rain integration)
+      console.log("Exported to Rain:", jsonPreviewData);
+
+      // Show success toast
+      setShowToast(true);
+
+      // Hide toast after 3 seconds
+      setTimeout(() => {
+        setShowToast(false);
+      }, 3000);
+    } catch (error) {
+      console.error("Export failed:", error);
+    } finally {
+      setIsExporting(false);
+      setExportProgress(0);
+    }
   };
 
   // Utility functions
@@ -990,44 +1040,122 @@ export default function HomePage() {
             <button
               className="export-button"
               onClick={exportToRain}
-              disabled={polymarketSelections.size + bet365Selections.size === 0}
+              disabled={isExportDisabled}
               style={{
                 padding: "16px 32px",
                 fontSize: "18px",
                 fontWeight: "600",
-                backgroundColor:
-                  polymarketSelections.size + bet365Selections.size > 0
-                    ? "rgba(222, 255, 78, 59)"
-                    : "#ccc",
-                color:
-                  polymarketSelections.size + bet365Selections.size > 0
-                    ? "black"
-                    : "white",
+                backgroundColor: isExportDisabled
+                  ? "#666666"
+                  : "rgba(222, 255, 78, 59)",
+                color: isExportDisabled ? "#999999" : "black",
                 border: "none",
                 borderRadius: 8,
-                cursor:
-                  polymarketSelections.size + bet365Selections.size > 0
-                    ? "pointer"
-                    : "not-allowed",
+                cursor: isExportDisabled ? "not-allowed" : "pointer",
                 minWidth: "200px",
                 boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                 transition: "all 0.2s ease",
+                opacity: isExportDisabled ? 0.6 : 1,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
+                position: "relative",
+                overflow: "hidden",
               }}
               onMouseOver={(e) => {
-                if (polymarketSelections.size + bet365Selections.size > 0) {
+                if (!isExportDisabled) {
                   e.target.style.transform = "translateY(-2px)";
                   e.target.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.15)";
                 }
               }}
               onMouseOut={(e) => {
-                e.target.style.transform = "translateY(0)";
-                e.target.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)";
+                if (!isExportDisabled) {
+                  e.target.style.transform = "translateY(0)";
+                  e.target.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)";
+                }
               }}
             >
-              Export to Rain
+              {isExporting && (
+                <div
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    bottom: 0,
+                    height: "4px",
+                    backgroundColor: "rgba(0, 0, 0, 0.3)",
+                    width: `${exportProgress}%`,
+                    transition: "width 0.3s ease",
+                    borderRadius: "0 0 8px 8px",
+                  }}
+                />
+              )}
+              {isExporting && (
+                <div
+                  style={{
+                    width: "20px",
+                    height: "20px",
+                    border: "2px solid transparent",
+                    borderTop: "2px solid black",
+                    borderRadius: "50%",
+                    animation: "spin 1s linear infinite",
+                  }}
+                />
+              )}
+              {isExporting
+                ? `Exporting ${totalQuestions} questions...`
+                : "Export to Rain"}
             </button>
           </div>
         )}
+
+        {/* Success Toast */}
+        {showToast && (
+          <div
+            style={{
+              position: "fixed",
+              top: "20px",
+              right: "20px",
+              backgroundColor: "#28a745",
+              color: "white",
+              padding: "16px 24px",
+              borderRadius: "8px",
+              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+              zIndex: 10002,
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              fontSize: "16px",
+              fontWeight: "500",
+              animation: "slideIn 0.3s ease-out",
+            }}
+          >
+            ✅ Successfully exported {totalQuestions} questions to Rain!
+          </div>
+        )}
+
+        {/* Add CSS animations */}
+        <style jsx>{`
+          @keyframes spin {
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
+          }
+
+          @keyframes slideIn {
+            0% {
+              transform: translateX(100%);
+              opacity: 0;
+            }
+            100% {
+              transform: translateX(0);
+              opacity: 1;
+            }
+          }
+        `}</style>
       </div>
     </>
   );
