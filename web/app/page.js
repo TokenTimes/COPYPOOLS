@@ -892,7 +892,7 @@ export default function HomePage() {
 
             {/* JSON Preview - 30% width */}
             <div
-              className="json-preview-container"
+              className="json-preview-container json-container"
               style={{
                 flex: "0 0 30%",
                 display: "flex",
@@ -900,6 +900,7 @@ export default function HomePage() {
                 height: "100%",
               }}
             >
+                
               <div
                 className="json-preview"
                 style={{
@@ -911,6 +912,7 @@ export default function HomePage() {
                   flexDirection: "column",
                 }}
               >
+                
                 <div
                   className="json-header"
                   style={{
