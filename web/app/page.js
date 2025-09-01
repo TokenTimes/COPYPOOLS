@@ -251,8 +251,8 @@ export default function HomePage() {
     if (!investmentAmount) return "";
     if (investmentValue > availableBalance)
       return "Investment amount exceeds available balance";
-    if (totalQuestions > 0 && investmentPerQuestion < 1)
-      return "Investment per question must be at least $1";
+    if (totalQuestions > 0 && investmentPerQuestion < 10)
+      return "Investment per question must be at least $10";
     return "";
   }, [
     investmentAmount,
