@@ -21,6 +21,7 @@ export function WalletConnect() {
   if (isConnected) {
     return (
       <div
+        className="wallet-header"
         style={{
           position: "fixed",
           top: 20,

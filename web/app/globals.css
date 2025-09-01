@@ -418,14 +418,37 @@ label {
     text-align: center !important;
   }
 
-  /* JSON Preview section mobile optimization */
+  /* Hide JSON Preview on mobile */
   .json-container {
-    width: 100% !important;
-    flex: none !important;
-    order: 2 !important;
-    height: 300px !important;
-    display: flex !important;
-    flex-direction: column !important;
+    display: none !important;
+  }
+
+  /* Mobile wallet header positioning fix */
+  .wallet-header {
+    position: fixed !important;
+    top: 10px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    right: auto !important;
+    z-index: 10001 !important;
+    max-width: calc(100vw - 20px) !important;
+    font-size: 12px !important;
+    padding: 6px 12px !important;
+  }
+
+  .wallet-header span {
+    font-size: 11px !important;
+  }
+
+  .wallet-header button {
+    padding: 2px 6px !important;
+    font-size: 10px !important;
+    margin-left: 6px !important;
+  }
+
+  /* Adjust main container to account for wallet header */
+  .main-container {
+    padding-top: 50px !important;
   }
 
   .export-button {

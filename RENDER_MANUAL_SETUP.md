@@ -7,6 +7,7 @@ If the `render.yaml` Blueprint continues to fail, manually create the service:
 1. **Go to Render Dashboard** → "New" → "Web Service"
 2. **Connect Repository**: `https://github.com/TokenTimes/COPYPOOLS`
 3. **Configure Service:**
+
    - **Name**: `polymarket-client`
    - **Environment**: `Node`
    - **Region**: `Oregon (US West)`
@@ -17,6 +18,7 @@ If the `render.yaml` Blueprint continues to fail, manually create the service:
    - **Node Version**: `22.16.0`
 
 4. **Environment Variables:**
+
    ```
    NEXT_PUBLIC_API_BASE=https://polymarket-server.onrender.com
    NODE_ENV=production
@@ -36,7 +38,8 @@ If the `render.yaml` Blueprint continues to fail, manually create the service:
 ## Verification
 
 After deployment, the service should:
+
 - Build successfully with `npm run build`
-- Start with `npm start` 
+- Start with `npm start`
 - Serve the Next.js app on the assigned URL
 - Show all recent updates (omedium font, $10 minimum investment, etc.)
