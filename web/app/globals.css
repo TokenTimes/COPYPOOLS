@@ -1,10 +1,12 @@
 /* Mobile Responsive CSS for Polymarket Scanner */
 
+/* Import IBM Plex Mono font */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
+
 /* Dark Mode Global Styles */
 * {
   box-sizing: border-box;
-  font-family: "omedium", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif !important;
+  font-family: "IBM Plex Mono", "Courier New", monospace !important;
 }
 
 /* App header with logo - desktop styles */
@@ -27,7 +29,7 @@
   font-size: 24px;
   font-weight: 600;
   color: #ffffff;
-  font-family: "omedium", system-ui, -apple-system, "Segoe UI", Roboto;
+  font-family: "IBM Plex Mono", "Courier New", monospace !important;
 }
 
 body {
@@ -37,8 +39,7 @@ body {
   line-height: 1.4;
   background-color: #1a1a1a !important;
   color: #ffffff !important;
-  font-family: "omedium", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif !important;
+  font-family: "IBM Plex Mono", "Courier New", monospace !important;
 }
 
 /* Dark Mode Base Styles */
@@ -91,28 +92,140 @@ body {
 table {
   background-color: #1a1a1a !important;
   color: #ffffff !important;
-  font-family: "omedium", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif !important;
+  font-family: "IBM Plex Mono", "Courier New", monospace !important;
 }
 
 thead th {
   background-color: #2a2a2a !important;
   color: #ffffff !important;
   border-bottom: 2px solid #444 !important;
-  font-family: "omedium", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif !important;
+  font-family: "IBM Plex Mono", "Courier New", monospace !important;
 }
 
 tbody td {
   background-color: #1a1a1a !important;
   color: #ffffff !important;
   border-bottom: 1px solid #333 !important;
-  font-family: "omedium", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif !important;
+  font-family: "IBM Plex Mono", "Courier New", monospace !important;
 }
 
 tbody tr:hover {
   background-color: #2a2a2a !important;
+}
+
+/* Smooth animation for table row transitions */
+tbody tr {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+tbody tr.selected {
+  border: 1px solid rgba(222, 255, 78, 0.2) !important;
+  border-radius: 4px !important;
+  background-color: rgba(222, 255, 78, 0.03) !important;
+}
+
+tbody tr.selected:hover {
+  background-color: rgba(222, 255, 78, 0.05) !important;
+}
+
+/* Smooth height transition for outcome allocation section */
+.outcome-allocation-container {
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  overflow: hidden !important;
+  will-change: max-height, opacity !important;
+  position: relative !important;
+}
+
+.outcome-allocation-container.expanded {
+  max-height: 1500px !important;
+  opacity: 1 !important;
+}
+
+.outcome-allocation-container.collapsed {
+  max-height: 40px !important;
+  opacity: 0.95 !important;
+}
+
+/* Ensure smooth content transitions */
+.outcome-allocation-container > * {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.outcome-allocation-container.collapsed > *:not(.outcome-preview) {
+  opacity: 0 !important;
+  transform: translateY(-10px) !important;
+  pointer-events: none !important;
+}
+
+.outcome-allocation-container.expanded > * {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  pointer-events: auto !important;
+}
+
+.outcome-preview {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+/* Smooth content transitions */
+.outcome-content {
+  transition: opacity 0.2s ease !important;
+}
+
+.outcome-content.hidden {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.outcome-content.visible {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* Individual outcome item animations */
+.outcome-item {
+  transition: background-color 0.2s ease, border-color 0.2s ease !important;
+}
+
+.outcome-item:hover {
+  background-color: #333 !important;
+  border-color: rgba(222, 255, 78, 0.2) !important;
+}
+
+/* Outcome preview styling for unselected rows */
+.outcome-preview {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.outcome-preview span:hover {
+  opacity: 1 !important;
+  color: #ffffff !important;
+}
+
+/* Scale animation for selected rows */
+tbody tr.selected td {
+  position: relative !important;
+}
+
+/* Smooth transitions for mobile */
+@media (max-width: 768px) {
+  tbody tr.selected {
+    border: 1px solid rgba(222, 255, 78, 0.15) !important;
+    background-color: rgba(222, 255, 78, 0.02) !important;
+  }
+  
+  .outcome-allocation-container {
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+  
+  .outcome-allocation-container.expanded {
+    max-height: 800px !important;
+  }
+  
+  .outcome-allocation-container.collapsed {
+    max-height: 35px !important;
+  }
 }
 
 .export-button {
@@ -157,8 +270,7 @@ button {
   background-color: #2a2a2a !important;
   color: #ffffff !important;
   border: 1px solid #444 !important;
-  font-family: "omedium", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif !important;
+  font-family: "IBM Plex Mono", "Courier New", monospace !important;
 }
 
 button:hover {
@@ -198,8 +310,7 @@ textarea {
   color: #ffffff !important;
   border: 1px solid #555 !important;
   border-radius: 4px !important;
-  font-family: "omedium", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif !important;
+  font-family: "IBM Plex Mono", "Courier New", monospace !important;
 }
 
 input[type="text"]:focus,
@@ -239,8 +350,7 @@ input[type="checkbox"] {
 /* Labels and text elements */
 label {
   color: #ffffff !important;
-  font-family: "omedium", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif !important;
+  font-family: "IBM Plex Mono", "Courier New", monospace !important;
 }
 
 /* Loading and error messages */
@@ -287,8 +397,7 @@ label {
     font-size: 20px !important;
     margin: 10px 0 !important;
     text-align: center;
-    font-family: "omedium", -apple-system, BlinkMacSystemFont, "Segoe UI",
-      Roboto, "Helvetica Neue", Arial, sans-serif !important;
+    font-family: "IBM Plex Mono", "Courier New", monospace !important;
   }
 
   /* Tab interface mobile optimization */
@@ -502,6 +611,7 @@ label {
     font-size: 18px !important;
     margin: 0 !important;
     color: rgba(222, 255, 78, 59) !important;
+    font-family: "IBM Plex Mono", "Courier New", monospace !important;
   }
 
   /* Ensure tabs are not hidden and have proper spacing */
@@ -524,6 +634,7 @@ label {
 
   .wallet-connect-container h1 {
     font-size: 24px !important;
+    font-family: "IBM Plex Mono", "Courier New", monospace !important;
   }
 
   .wallet-connect-container div {
@@ -840,6 +951,7 @@ input[type="range"]::-moz-range-thumb {
   border: 1px solid #444 !important;
   cursor: pointer !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  appearance: none !important;
   -moz-appearance: none !important;
 }
 

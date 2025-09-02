@@ -807,16 +807,15 @@ export default function HomePage() {
           <h1
             style={{
               margin: 0,
-              fontSize: 24,
-              fontWeight: 600,
+              fontSize: 34,
+              fontWeight: 700,
               color: "rgba(222, 255, 78, 59)",
-              fontFamily: "omedium, system-ui, -apple-system, Segoe UI, Roboto",
+              fontFamily: "Montserrat, sans-serif",
             }}
           >
             DROPS
           </h1>
         </div>
-
         {/* Tab Interface */}
         <div style={{ marginBottom: 20, marginTop: 25 }}>
           <div style={{ display: "flex" }}>
@@ -837,9 +836,10 @@ export default function HomePage() {
                 cursor: "pointer",
                 fontWeight: 600,
                 fontSize: 16,
+                borderRadius: 6,
               }}
             >
-              📊 Polymarket
+              Polymarket
             </button>
             <button
               className={`tab-button ${activeTab === "bet365" ? "active" : ""}`}
@@ -854,93 +854,13 @@ export default function HomePage() {
                 cursor: "pointer",
                 fontWeight: 600,
                 fontSize: 16,
+                borderRadius: 6,
               }}
             >
-              ⚽ Bet365
+              Bet365
             </button>
           </div>
-        </div>
-        <div
-          className="controls-section"
-          style={{
-            display: "flex",
-            gap: 12,
-            flexWrap: "wrap",
-            marginBottom: 12,
-          }}
-        >
-          <input
-            className="control-input"
-            type="text"
-            placeholder="Search title or category…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            style={{ padding: 8, minWidth: 280 }}
-          />
-          <input
-            className="control-input"
-            type="number"
-            min={0}
-            placeholder="Min liquidity"
-            value={minLiquidity}
-            onChange={(e) => setMinLiquidity(e.target.value)}
-            style={{ padding: 8, width: 160 }}
-          />
-          <select
-            className="control-input"
-            value={displayLimit}
-            onChange={(e) => setDisplayLimit(Number(e.target.value))}
-            style={{ padding: 8, width: 120 }}
-          >
-            <option value={20}>Show 20</option>
-            <option value={50}>Show 50</option>
-            <option value={100}>Show 100</option>
-            <option value={200}>Show 200</option>
-            <option value={500}>Show 500</option>
-          </select>
-
-          {/* Polymarket-specific controls */}
-          {activeTab === "polymarket" && (
-            <label
-              style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
-            >
-              <input
-                type="checkbox"
-                checked={onlyOpen}
-                onChange={(e) => setOnlyOpen(e.target.checked)}
-              />{" "}
-              Only open
-            </label>
-          )}
-
-          {/* Bet365-specific controls */}
-          {activeTab === "bet365" && (
-            <>
-              <select
-                className="control-input"
-                value={sport}
-                onChange={(e) => setSport(e.target.value)}
-                style={{ padding: 8, width: 180 }}
-              >
-                <option value="soccer_epl">Premier League</option>
-                <option value="soccer_uefa_champs_league">
-                  Champions League
-                </option>
-                <option value="basketball_nba">NBA</option>
-                <option value="mma_mixed_martial_arts">MMA</option>
-                <option value="tennis_atp">ATP Tennis</option>
-              </select>
-              <input
-                className="control-input"
-                type="text"
-                value={regions}
-                onChange={(e) => setRegions(e.target.value)}
-                style={{ padding: 8, width: 120 }}
-                placeholder="uk,eu,us,au"
-              />
-            </>
-          )}
-        </div>
+        </div>{" "}
         {/* Investment controls */}
         <div
           className="investment-box"
@@ -995,6 +915,73 @@ export default function HomePage() {
             >
               {investmentError}
             </span>
+          )}
+        </div>
+        <div
+          className="controls-section"
+          style={{
+            display: "flex",
+            gap: 12,
+            flexWrap: "wrap",
+            marginBottom: 12,
+          }}
+        >
+          <input
+            className="control-input"
+            type="text"
+            placeholder="Search title or category…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            style={{ padding: 8, minWidth: 280 }}
+          />
+          <input
+            className="control-input"
+            type="number"
+            min={0}
+            placeholder="Min liquidity"
+            value={minLiquidity}
+            onChange={(e) => setMinLiquidity(e.target.value)}
+            style={{ padding: 8, width: 160 }}
+          />
+          <select
+            className="control-input"
+            value={displayLimit}
+            onChange={(e) => setDisplayLimit(Number(e.target.value))}
+            style={{ padding: 8, width: 120 }}
+          >
+            <option value={20}>Show 20</option>
+            <option value={50}>Show 50</option>
+            <option value={100}>Show 100</option>
+            <option value={200}>Show 200</option>
+            <option value={500}>Show 500</option>
+          </select>
+
+          {/* Bet365-specific controls */}
+          {activeTab === "bet365" && (
+            <>
+              <select
+                className="control-input"
+                value={sport}
+                onChange={(e) => setSport(e.target.value)}
+                style={{ padding: 8, width: 180 }}
+              >
+                <option value="soccer_epl">Premier League</option>
+                <option value="soccer_uefa_champs_league">
+                  Champions League
+                </option>
+                <option value="basketball_nba">NBA</option>
+                <option value="mma_mixed_martial_arts">MMA</option>
+                <option value="tennis_atp">ATP Tennis</option>
+              </select>
+              <input
+                className="control-input"
+                type="text"
+                value={regions}
+                onChange={(e) => setRegions(e.target.value)}
+                style={{ padding: 8, width: 120 }}
+                placeholder="uk,eu,us,au"
+              />
+            </>
           )}
         </div>
         {loading && <p className="loading">Loading…</p>}
@@ -1304,6 +1291,7 @@ export default function HomePage() {
                                     </div>
                                   );
                                 })}
+
                                 {hasValidOddsForDisplay(m.outcomes) && (
                                   <div
                                     style={{
@@ -1518,12 +1506,11 @@ export default function HomePage() {
                 />
               )}
               {isExporting
-                ? `Exporting ${totalQuestions} questions...`
-                : "Export to Rain"}
+                ? `Exporting ${totalQuestions} drops ...`
+                : "Make it Rain"}
             </button>
           </div>
         )}
-
         {/* Success Toast */}
         {showToast && (
           <div
@@ -1548,7 +1535,6 @@ export default function HomePage() {
             ✅ Successfully exported {totalQuestions} questions to Rain!
           </div>
         )}
-
         {/* Add CSS animations */}
         <style jsx>{`
           @keyframes spin {
